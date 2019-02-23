@@ -136,7 +136,7 @@ public class LinkedListDeque<T> {
     private T getRecursive(int index, TNode curr) {
 
         if (index == 0) {
-             return curr.item;
+            return curr.item;
         }
         return getRecursive(index - 1, curr.next);
     }
