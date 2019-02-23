@@ -4,9 +4,9 @@
  * @author zangsy
  */
 
-public class ArrayDeque<Item> {
+public class ArrayDeque<T> {
 
-    private Item[] items;
+    private T[] items;
     private int nextFirst;
     private int nextLast;
     private int size;
@@ -16,7 +16,7 @@ public class ArrayDeque<Item> {
      */
     public ArrayDeque() {
         // Java does not allow to create new generic array directly. So need cast.
-        items = (Item[]) new Object[8];
+        items = (T[]) new Object[8];
         nextFirst = 0;
         nextLast = 1;
         size = 0;
@@ -54,13 +54,15 @@ public class ArrayDeque<Item> {
      * Resize the deque.
      */
     private void resize(int capacity) {
-        Item[] newDeque = (Item[]) new Object[capacity];
+        T[] newDeque = (T[]) new Object[capacity];
         int oldIndex = plusOne(nextFirst); // the index of the first item in original deque
         int newIndex = 0;
         for (int i = 0; i < size; i++) {
-            newDeque[newIndex] = items[oldIndex];
-            newIndex += 1;
-            oldIndex = plusOne(oldIndex);
+            if (items[oldIndex] != null) {
+                newDeque[newIndex] = items[oldIndex];
+                newIndex += 1;
+                oldIndex = plusOne(oldIndex);
+            }
         }
         items = newDeque;
         nextFirst = capacity - 1; // since the new deque is starting from true 0 index.
@@ -110,7 +112,7 @@ public class ArrayDeque<Item> {
     /**
      * Add an item of type Item to the front of the deque.
      */
-    public void addFirst(Item x) {
+    public void addFirst(T x) {
         if (isFull()) {
             upSize();
         }
@@ -122,7 +124,7 @@ public class ArrayDeque<Item> {
     /**
      * Add an item of type Item to the back of deque.
      */
-    public void addLast(Item x) {
+    public void addLast(T x) {
         if (isFull()) {
             upSize();
         }
@@ -135,12 +137,12 @@ public class ArrayDeque<Item> {
      * Remove and return the item at the front of the deque.
      * If no such item exist, return null.
      */
-    public Item removeFirst() {
+    public T removeFirst() {
         if (isSparse()) {
             downSize();
         }
         nextFirst = plusOne(nextFirst);
-        Item toRemove = items[nextFirst];
+        T toRemove = items[nextFirst];
         items[nextFirst] = null;
         size -= 1;
         return toRemove;
@@ -150,12 +152,12 @@ public class ArrayDeque<Item> {
      * Remove and return the item at the back oc the deque.
      * If no such item exist, return null.
      */
-    public Item removeLast() {
+    public T removeLast() {
         if (isSparse()) {
             downSize();
         }
         nextLast = minusOne(nextLast);
-        Item toRemove = items[nextLast];
+        T toRemove = items[nextLast];
         items[nextLast] = null;
         size -= 1;
         return toRemove;
@@ -166,7 +168,7 @@ public class ArrayDeque<Item> {
      * 1 is the next item, and so forth. If no such item exists,
      * returns null. Must not alter the deque.
      */
-    public Item get(int index) {
+    public T get(int index) {
         int start = plusOne(nextFirst);
         return items[(start + index) % items.length];
     }
@@ -175,7 +177,7 @@ public class ArrayDeque<Item> {
      * Create a deep copy of other.
      */
     public ArrayDeque(ArrayDeque other) {
-        items = (Item[]) new Object[other.size];
+        items = (T[]) new Object[other.size];
         nextFirst = other.nextFirst;
         nextLast = other.nextLast;
         size = other.size;

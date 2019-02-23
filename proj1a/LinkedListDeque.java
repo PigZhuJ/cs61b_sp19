@@ -5,11 +5,11 @@
 public class LinkedListDeque<T> {
 
     private class TNode {
-        public T item;
-        public TNode prev;
-        public TNode next;
+        private T item;
+        private TNode prev;
+        private TNode next;
 
-        public TNode(T x, TNode p, TNode n) {
+        private TNode(T x, TNode p, TNode n) {
             item = x;
             prev = p;
             next = n;
@@ -82,7 +82,9 @@ public class LinkedListDeque<T> {
         T toRemove = sentinel.next.item;
         sentinel.next.next.prev = sentinel;
         sentinel.next = sentinel.next.next;
-        size -= 1;
+        if (!isEmpty()) {
+            size -= 1;
+        }
         return toRemove;
 
     }
@@ -95,7 +97,9 @@ public class LinkedListDeque<T> {
         T toRemove = sentinel.prev.item;
         sentinel.prev.prev.next = sentinel;
         sentinel.prev = sentinel.prev.prev;
-        size -= 1;
+        if (!isEmpty()) {
+            size -= 1;
+        }
         return toRemove;
     }
 
