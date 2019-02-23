@@ -134,10 +134,11 @@ public class LinkedListDeque<T> {
      * First, need a private helper method
      */
     private T getRecursive(int index, TNode curr) {
-         if (index == 0) {
+
+        if (index == 0) {
              return curr.item;
-         }
-         return getRecursive(index - 1, curr.next);
+        }
+        return getRecursive(index - 1, curr.next);
     }
 
     public T getRecursive(int index) {

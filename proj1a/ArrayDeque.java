@@ -144,7 +144,9 @@ public class ArrayDeque<T> {
         nextFirst = plusOne(nextFirst);
         T toRemove = items[nextFirst];
         items[nextFirst] = null;
-        size -= 1;
+        if (!isEmpty()) {
+            size -= 1;
+        }
         return toRemove;
     }
 
@@ -169,6 +171,9 @@ public class ArrayDeque<T> {
      * returns null. Must not alter the deque.
      */
     public T get(int index) {
+        if (index >= size) {
+            return null;
+        }
         int start = plusOne(nextFirst);
         return items[(start + index) % items.length];
     }
