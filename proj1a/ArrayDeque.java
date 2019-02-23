@@ -59,10 +59,8 @@ public class ArrayDeque<T> {
     private void resize(int capacity) {
         T[] newDeque = (T[]) new Object[capacity];
         int oldIndex = plusOne(nextFirst); // the index of the first item in original deque
-        int newIndex = 0;
-        for (int i = 0; i < size; i++) {
+        for (int newIndex = 0; newIndex < size; newIndex++) {
             newDeque[newIndex] = items[oldIndex];
-            newIndex += 1;
             oldIndex = plusOne(oldIndex);
         }
         items = newDeque;
@@ -190,7 +188,7 @@ public class ArrayDeque<T> {
         nextLast = other.nextLast;
         size = other.size;
 
-        System.arraycopy(other.items, plusOne(nextFirst), items, plusOne(nextFirst), other.size);
+        System.arraycopy(other.items, 0, items, 0, other.size);
     }
 
 

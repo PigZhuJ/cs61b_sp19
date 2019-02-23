@@ -33,16 +33,6 @@ public class LinkedListDeque<T> {
     }
 
     /**
-     * Create a non-empty deque
-     */
-    public LinkedListDeque(T item) {
-        sentinel = new TNode(null, null, null);
-        sentinel.next = new TNode(item, sentinel, sentinel);
-        sentinel.prev = sentinel.next;
-        size = 1;
-    }
-
-    /**
      * Return the number of items in the deque
      */
     public int size() {
