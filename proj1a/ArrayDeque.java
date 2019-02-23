@@ -162,7 +162,9 @@ public class ArrayDeque<T> {
         nextLast = minusOne(nextLast);
         T toRemove = items[nextLast];
         items[nextLast] = null;
-        size -= 1;
+        if (!isEmpty()) {
+            size -= 1;
+        }
         return toRemove;
     }
 
