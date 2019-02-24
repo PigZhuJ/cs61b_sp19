@@ -22,6 +22,7 @@ public class TestPalindrome {
         assertTrue(palindrome.isPalindrome("madam"));
         assertTrue(palindrome.isPalindrome("racecar"));
         assertTrue(palindrome.isPalindrome("a"));
+        assertTrue(palindrome.isPalindrome(""));
         assertFalse(palindrome.isPalindrome("dog"));
         assertFalse(palindrome.isPalindrome("cat"));
     }
