@@ -30,6 +30,5 @@ public class TestOffByOne {
         assertFalse(offByOne.equalChars('?', '!'));
         assertFalse(offByOne.equalChars('`', 'A'));
         assertFalse(offByOne.equalChars(' ', '"'));
-
     }
 }

@@ -46,5 +46,4 @@ public class TestPalindrome {
         assertFalse(palindrome.isPalindrome("aa", obo));
         assertFalse(palindrome.isPalindrome("zxzx", obo));
     }
-
 }
