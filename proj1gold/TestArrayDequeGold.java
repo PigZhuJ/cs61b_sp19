@@ -12,10 +12,10 @@ public class TestArrayDequeGold {
         StudentArrayDeque<Integer> sad = new StudentArrayDeque<Integer>();
         ArrayDequeSolution<Integer> happy = new ArrayDequeSolution<>();
         List<String> operations = new ArrayList<>();
-        String operation = "";
 
         for (int i = 0; i < 100; i += 1) {
             // turn all operations that have been executed to string.
+            String operation = "";
             for (String op : operations) {
                 operation = operation + "\n" + op;
             }
