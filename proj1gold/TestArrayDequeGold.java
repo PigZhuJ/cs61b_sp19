@@ -12,10 +12,9 @@ public class TestArrayDequeGold {
         StudentArrayDeque<Integer> sad = new StudentArrayDeque<Integer>();
         ArrayDequeSolution<Integer> happy = new ArrayDequeSolution<>();
         List<String> operations = new ArrayList<>();
+        String operation = "";
 
         for (int i = 0; i < 100; i += 1) {
-            // instantiate
-            String operation = "";
             // turn all operations that have been executed to string.
             for (String op : operations) {
                 operation = operation + "\n" + op;
@@ -30,6 +29,7 @@ public class TestArrayDequeGold {
                 operations.add("addFirst(" + i + ")");
                 assertEquals(operation + "\n" + "addFirst(" + i + ")", happyFirst, sadFirst);
             } else if(seed == 1) {
+                // addLast has problem.
                 // make this seed equals to a int > 4 can check whether
                 // other methods have problems
                 sad.addLast(i);
@@ -37,7 +37,7 @@ public class TestArrayDequeGold {
                 Integer sadLast = sad.get(sad.size() - 1);
                 Integer happyLast = happy.get(happy.size() - 1);
                 operations.add("addLast(" + i + ")");
-                assertEquals(operation + "\n" + "addLast(" + i + ")", happyLast, sadLast); // addLast has problem
+                assertEquals(operation + "\n" + "addLast(" + i + ")", happyLast, sadLast);
             } else if(seed == 2 && !sad.isEmpty()) {
                 Integer sadRemoveFirst = sad.removeFirst();
                 Integer happyRemoveFirst = happy.removeFirst();
