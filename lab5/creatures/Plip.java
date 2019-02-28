@@ -141,12 +141,16 @@ public class Plip extends Creature {
             }
         }
         if (emptyNeighbors.size() == 0) {
+            // Rule 1
             return new Action(Action.ActionType.STAY);
         } else if (energy >= 1.0) {
+            // Rule 2
             return new Action(Action.ActionType.REPLICATE, randomEntry(emptyNeighbors));
         } else if (anyClorus && Math.random() > 0.5) {
+            // Rule 3
             return new Action(Action.ActionType.MOVE, randomEntry(emptyNeighbors));
         } else {
+            // Rule 4
             return new Action(Action.ActionType.STAY);
         }
 
