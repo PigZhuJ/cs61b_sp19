@@ -1,4 +1,4 @@
-# CS61B: Data Structures
+# CS 61B: Data Structures
 
 By Josh Hug
 
