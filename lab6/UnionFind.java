@@ -62,6 +62,10 @@ public class UnionFind {
                 intSets[find(v2)] -= sizeOf(v1);
                 intSets[find(v1)] = find(v2);
             }
+        } else {
+            // apply path-compression.
+            intSets[v1] = find(v1);
+            intSets[v2] = find(v2);
         }
 
     }
@@ -75,6 +79,7 @@ public class UnionFind {
         while (parent(root) > -1) {
             root = parent(root);
         }
+        // path-compression
         int currParent;
         while (vertex != root) {
             currParent = parent(vertex);
