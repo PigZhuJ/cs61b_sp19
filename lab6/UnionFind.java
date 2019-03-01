@@ -62,16 +62,8 @@ public class UnionFind {
                 intSets[find(v2)] -= sizeOf(v1);
                 intSets[find(v1)] = find(v2);
             }
-        } else {
-            while (parent(v1) != find(v1)) {
-                intSets[v1] = find(v1);
-                v1 = parent(v1);
-            }
-            while (parent(v2) != find(v2)) {
-                intSets[v2] = find(v2);
-                v2 = parent(v2);
-            }
         }
+
     }
 
     /* Returns the root of the set V belongs to. Path-compression is employed
@@ -82,6 +74,12 @@ public class UnionFind {
         int root = vertex;
         while (parent(root) > -1) {
             root = parent(root);
+        }
+        int currParent;
+        while (vertex != root) {
+            currParent = parent(vertex);
+            intSets[vertex] = root;
+            vertex = currParent;
         }
         return root;
     }
