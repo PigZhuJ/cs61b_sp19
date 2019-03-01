@@ -62,12 +62,7 @@ public class UnionFind {
                 intSets[find(v2)] -= sizeOf(v1);
                 intSets[find(v1)] = find(v2);
             }
-        } else {
-            // apply path-compression for items already connected.
-            intSets[v1] = find(v1);
-            intSets[v2] = find(v2);
         }
-
     }
 
     /* Returns the root of the set V belongs to. Path-compression is employed
