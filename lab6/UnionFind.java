@@ -55,6 +55,12 @@ public class UnionFind {
         validate(v1);
         validate(v2);
         if (!connected(v1, v2)) {
+            // no extra path-compression step needed for the case of
+            // connected v1 and v2,
+            // because the connected(v1, v2) is always called whenever
+            // v1 and v2 are connected or not,
+            // because there is find() in connected(), 
+            // so path-compression is already applied.
             if (sizeOf(v1) > sizeOf(v2)) {
                 intSets[find(v1)] -= sizeOf(v2);
                 intSets[find(v2)] = find(v1);
