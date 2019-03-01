@@ -1,5 +1,3 @@
-package lab6;
-
 public class UnionFind {
 
     // TODO - Add instance variables?
