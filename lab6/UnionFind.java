@@ -63,7 +63,7 @@ public class UnionFind {
                 intSets[find(v1)] = find(v2);
             }
         } else {
-            // apply path-compression.
+            // apply path-compression for items already connected.
             intSets[v1] = find(v1);
             intSets[v2] = find(v2);
         }
