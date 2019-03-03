@@ -118,6 +118,7 @@ public class ArrayRingBuffer<T> implements BoundedQueue<T> {
         public T next() {
             T currItem = rb[currPos];
             currPos = (currPos + 1) % capacity();
+            count += 1;
             return currItem;
         }
     }
