@@ -106,6 +106,7 @@ public class ArrayRingBuffer<T> implements BoundedQueue<T> {
 
         public ArrayRingBufferIterator() {
             currPos = first;
+            count = 0;
         }
 
         @Override
