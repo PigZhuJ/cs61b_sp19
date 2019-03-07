@@ -27,6 +27,7 @@ public class PercolationStats {
                     numOpenedSites += 1;
                 }
             }
+            // if no double cast, the division will two integers will round down to a integer
             fractions[i] = (double) numOpenedSites / totalSites;
         }
     }
