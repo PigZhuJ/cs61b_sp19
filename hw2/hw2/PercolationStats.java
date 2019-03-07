@@ -27,7 +27,7 @@ public class PercolationStats {
                     numOpenedSites += 1;
                 }
             }
-            fractions[i] = (double) (numOpenedSites / totalSites);
+            fractions[i] = (double) numOpenedSites / totalSites;
         }
     }
 
