@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Iterator;
 
@@ -21,7 +22,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     public BSTMap() {
     }
 
-    /** Removes all of the mappings from this map. */
+    /**
+     * Removes all of the mappings from this map.
+     */
     @Override
     public void clear() {
         root = null;
@@ -100,22 +103,26 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return x;
     }
 
+    /* Print the BSTMap (key, vale) pairs in increasing of order of key. */
     public void printInOrder() {
         for (int i = 0; i < size(); i += 1) {
             System.out.println(select(i).key + " " + select(i).value);
         }
     }
 
-    /* Return the Node with (k + 1)st smallest key. */
+    /* printInOrder() helper.
+     * Return the Node with (k + 1)st smallest key.
+     */
     private Node select(int k) {
         if (k < 0 || k >= size()) {
             throw new IllegalArgumentException();
         }
-        Node x = select(root, k);
-        return x;
+        return select(root, k);
     }
 
-    /* Return key of rank k. */
+    /* printInOrder() helper.
+     * Return key of rank k.
+     */
     private Node select(Node x, int k) {
         if (x == null) {
             return null;
@@ -133,7 +140,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> BSTSet = new HashSet<>();
+        for (int i = 0; i < size(); i += 1) {
+            BSTSet.add(select(i).key);
+        }
+        return BSTSet;
     }
 
     /* Removes the mapping for the specified key from this map if present.
@@ -155,4 +166,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     public Iterator<K> iterator() {
         throw new UnsupportedOperationException();
     }
+
+    /*public static void main(String[] args) {
+        BSTMap<String, Integer> bstMap = new BSTMap<>();
+        for (int i = 0; i < 10; i++) {
+            bstMap.put("hi" + i, 1 + i);
+        }
+        bstMap.printInOrder();
+    }*/
 }
