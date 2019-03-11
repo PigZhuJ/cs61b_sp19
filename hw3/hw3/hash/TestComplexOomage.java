@@ -32,7 +32,7 @@ public class TestComplexOomage {
         assertTrue(OomageTestUtility.haveNiceHashCodeSpread(oomages, 10));
     }
 
-    /* TODO: Create a list of Complex Oomages called deadlyList
+    /* DONE: Create a list of Complex Oomages called deadlyList
      * that shows the flaw in the hashCode function.
      */
 
@@ -43,11 +43,11 @@ public class TestComplexOomage {
         // Your code here.
         for (int i = 0; i < 10; i += 1) {
             ArrayList<Integer> params = new ArrayList<>();
-            params.add(1);
+            params.add(i);
             // According to hashCode() in ComplexOomage.java and Hint.java,
             // if the hashCode exceeds 256e3, it will overflow to 0.
             for (int j = 0; j < 4; j += 1) {
-                params.add(0);
+                params.add(1);
             }
             ComplexOomage com = new ComplexOomage(params);
             deadlyList.add(com);
