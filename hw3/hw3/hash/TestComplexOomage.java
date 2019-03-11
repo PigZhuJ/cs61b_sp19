@@ -46,6 +46,8 @@ public class TestComplexOomage {
             params.add(i);
             // According to hashCode() in ComplexOomage.java and Hint.java,
             // if the hashCode exceeds 256e3, it will overflow to 0.
+            // Use add(i) rather than add(some_constant) will let built-in
+            // hashCode() to pass.
             for (int j = 0; j < 4; j += 1) {
                 params.add(1);
             }
