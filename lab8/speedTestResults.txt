@@ -1,0 +1,19 @@
+InsertInOrderSpeedTest:
+This program inserts lexicographically increasing Stringsinto Maps as <String, Integer> pairs.
+Enter # strings to insert into ULLMap: 10000
+class ULLMap: 0.73 sec
+Enter # strings to insert into MyHashMap: 10000
+class MyHashMap: 0.03 sec
+Enter # strings to insert into Java's HashMap: 10000
+Java's Built-in HashMap: 0.01 sec
+
+InsertRandomSpeedTest:
+This program inserts random Strings of length L
+Into different types of maps as <String, Integer> pairs.
+What would you like L to be?: 5
+Enter # strings to insert into ULLMap: 20000
+class ULLMap: 1.10 sec
+Enter # strings to insert into your MyHashMap: 20000
+class MyHashMap: 0.01 sec
+Enter # strings to insert into Java's HashMap: 20000
+Java's Built-in HashMap: 0.01 sec
