@@ -153,7 +153,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     private void put(int hashCode, K key, V value) {
-        BucketEntity<K, V> entity = new BucketEntity(hashCode, key, value, buckets[hashCode]);
+        BucketEntity<K, V> entity = new BucketEntity<>(hashCode, key, value, buckets[hashCode]);
         buckets[hashCode] = entity;
         size += 1;
         if (size > threshold) {
