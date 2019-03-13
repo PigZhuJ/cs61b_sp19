@@ -98,6 +98,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         if (key == null) {
             throw new IllegalArgumentException();
         }
+        // Cited from https://algs4.cs.princeton.edu/34hash/SeparateChainingHashST.java.html
         return (key.hashCode() & 0x7fffffff) % length;
     }
 
@@ -163,14 +164,14 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     private void resize(int capacity) {
         BucketEntity<K, V>[] newBuckets = new BucketEntity[capacity];
         for (int i = 0; i < buckets.length; i += 1) {
-            BucketEntity<K, V> oldEntity = buckets[i];
-            while (oldEntity != null) {
-                BucketEntity<K, V> oldNext = oldEntity.getNext();
-                int newHashCode = hash(oldEntity.getKey(), newBuckets.length);
-                oldEntity.setNext(newBuckets[newHashCode]);
-                oldEntity.setHashCode(newHashCode);
-                newBuckets[newHashCode] = oldEntity;
-                oldEntity = oldNext;
+            BucketEntity<K, V> entity = buckets[i];
+            while (entity != null) {
+                BucketEntity<K, V> oldNext = entity.getNext();
+                int newHashCode = hash(entity.getKey(), newBuckets.length);
+                entity.setNext(newBuckets[newHashCode]);
+                entity.setHashCode(newHashCode);
+                newBuckets[newHashCode] = entity;
+                entity = oldNext;
             }
         }
         buckets = newBuckets;
@@ -196,7 +197,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return keySet().iterator();
     }
 
-
     /**
      * Removes the mapping for the specified key from this map if present.
      * Not required for Lab 8. If you don't implement this, throw an
@@ -204,7 +204,29 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+        int hashCode = hash(key, buckets.length);
+        return remove(hashCode, key);
+    }
+
+    private V remove(int hashCode, K key) {
+        BucketEntity<K, V> entity = buckets[hashCode];
+        BucketEntity<K, V> nextEntity = entity.getNext();
+        if (entity.getKey().equals(key)) {
+            V toRemove = entity.getValue();
+            buckets[hashCode] = nextEntity;
+            return toRemove;
+        } else {
+            while (!nextEntity.getKey().equals(key)) {
+                entity = entity.getNext();
+                nextEntity = nextEntity.getNext();
+            }
+            V toRemove = nextEntity.getValue();
+            entity.next = nextEntity.getNext();
+            return toRemove;
+        }
     }
 
     /**
@@ -214,7 +236,32 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+        int hashCode = hash(key, buckets.length);
+        return remove(hashCode, key, value);
+    }
+
+    private V remove(int hashCode, K key, V value) {
+        BucketEntity<K, V> entity = buckets[hashCode];
+        BucketEntity<K, V> nextEntity = entity.getNext();
+        if (entity.getKey().equals(key) && entity.getValue().equals(value)) {
+            V toRemove = entity.getValue();
+            buckets[hashCode] = nextEntity;
+            return toRemove;
+        } else {
+            while (!nextEntity.getKey().equals(key)) {
+                entity = entity.getNext();
+                nextEntity = nextEntity.getNext();
+            }
+            if (nextEntity.getValue().equals(value)) {
+                V toRemove = nextEntity.getValue();
+                entity.next = nextEntity.getNext();
+                return toRemove;
+            }
+        }
+        return null;
     }
 
 }
