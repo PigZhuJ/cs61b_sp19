@@ -94,6 +94,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return get(key) != null;
     }
 
+    /** Rewrite the hashCode for this class. */
     private int hash(K key, int length) {
         if (key == null) {
             throw new IllegalArgumentException();
@@ -217,6 +218,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         if (entity.getKey().equals(key)) {
             V toRemove = entity.getValue();
             buckets[hashCode] = nextEntity;
+            size -= 1;
             return toRemove;
         } else {
             while (!nextEntity.getKey().equals(key)) {
@@ -224,7 +226,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
                 nextEntity = nextEntity.getNext();
             }
             V toRemove = nextEntity.getValue();
-            entity.next = nextEntity.getNext();
+            entity.setNext(nextEntity.getNext());
+            size -= 1;
             return toRemove;
         }
     }
@@ -249,6 +252,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         if (entity.getKey().equals(key) && entity.getValue().equals(value)) {
             V toRemove = entity.getValue();
             buckets[hashCode] = nextEntity;
+            size -= 1;
             return toRemove;
         } else {
             while (!nextEntity.getKey().equals(key)) {
@@ -257,7 +261,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             }
             if (nextEntity.getValue().equals(value)) {
                 V toRemove = nextEntity.getValue();
-                entity.next = nextEntity.getNext();
+                entity.setNext(nextEntity.getNext());
+                size -= 1;
                 return toRemove;
             }
         }
