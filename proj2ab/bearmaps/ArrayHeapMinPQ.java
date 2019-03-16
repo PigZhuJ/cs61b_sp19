@@ -28,7 +28,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         itemIndexMap.put(item, size());
         size += 1;
         int currPos = size() - 1;
-        swim(currPos);
+        climb(currPos);
     }
 
     /* Returns true if the PQ contains the given item. */
@@ -82,7 +82,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         if (Double.compare(oldPriority, priority) <= 0) {
             sink(index);
         } else {
-            swim(index);
+            climb(index);
         }
     }
 
@@ -159,10 +159,10 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
     // Helper of add().
-    private void swim(int i) {
+    private void climb(int i) {
         if (i > 0 && smaller(i, parent(i))) {
             swap(i, parent(i));
-            swim(parent(i));
+            climb(parent(i));
         }
     }
 
