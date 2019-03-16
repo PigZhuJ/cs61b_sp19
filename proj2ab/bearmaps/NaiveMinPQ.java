@@ -51,7 +51,7 @@ public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     @Override
     public void changePriority(T item, double priority) {
-        if (contains(item) == false) {
+        if (!contains(item)) {
             throw new NoSuchElementException("PQ does not contain " + item);
         }
         items.get(indOf(item)).setPriority(priority);

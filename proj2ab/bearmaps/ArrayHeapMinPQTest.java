@@ -76,13 +76,13 @@ public class ArrayHeapMinPQTest {
             minHeap.add(i, 100000 - i);
         }
         long end = System.currentTimeMillis();
-        System.out.println("Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+        System.out.println("Total time elapsed: " + (end - start) / 1000.0 +  " seconds.");
 
         long start2 = System.currentTimeMillis();
         for (int j = 0; j < 200000; j += 1) {
             minHeap.changePriority(j, j + 1);
         }
         long end2 = System.currentTimeMillis();
-        System.out.println("Total time elapsed: " + (end2 - start2)/1000.0 +  " seconds.");
+        System.out.println("Total time elapsed: " + (end2 - start2) / 1000.0 +  " seconds.");
     }
 }

@@ -25,6 +25,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             throw new IllegalArgumentException();
         }
         itemPQ.add(new PriorityNode(item, priority));
+        itemIndexMap.put(item, size());
         size += 1;
         int currPos = size() - 1;
         swim(currPos);
@@ -184,8 +185,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     private void swap(int i, int j) {
         PriorityNode iTemp = itemPQ.get(i);
         PriorityNode jTemp = itemPQ.get(j);
-        itemIndexMap.put(iTemp.getItem(), j);
-        itemIndexMap.put(jTemp.getItem(), i);
+        itemIndexMap.replace(iTemp.getItem(), j);
+        itemIndexMap.replace(jTemp.getItem(), i);
         itemPQ.set(i, jTemp);
         itemPQ.set(j, iTemp);
     }
