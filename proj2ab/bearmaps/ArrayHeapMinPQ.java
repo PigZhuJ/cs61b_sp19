@@ -86,10 +86,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         }
     }
 
-    private void changePriority(PriorityNode pn, T item, double priority) {
-
-    }
-
     private class PriorityNode implements Comparable<PriorityNode> {
 
         private T item;
