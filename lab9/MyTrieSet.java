@@ -120,7 +120,7 @@ public class MyTrieSet implements TrieSet61B {
 
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         MyTrieSet trie = new MyTrieSet();
         trie.add("hi");
         trie.add("hello");
@@ -135,5 +135,5 @@ public class MyTrieSet implements TrieSet61B {
         System.out.println(trie.longestPrefixOf("hello"));
         System.out.println(trie.keysWithPrefix("homo"));
         System.out.println(trie.longestPrefixOf("homophone"));
-    }
+    }*/
 }
