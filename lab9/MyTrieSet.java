@@ -33,7 +33,7 @@ public class MyTrieSet implements TrieSet61B {
             }
             currNode = nextNode;
         }
-        return currNode.isKey;
+        return currNode.isLeaf;
     }
 
     /** Inserts string KEY into Trie */
@@ -50,7 +50,7 @@ public class MyTrieSet implements TrieSet61B {
             }
             currNode = currNode.children.get(c);
         }
-        currNode.isKey = true;
+        currNode.isLeaf = true;
     }
 
     /** Returns a list of all words that start with PREFIX */
@@ -74,12 +74,12 @@ public class MyTrieSet implements TrieSet61B {
     }
 
     private void keysWithPrefix(List<String> result, String word, TrieNode currNode) {
-        if (currNode.isKey) {
-            result.add(word + currNode.c);
+        if (currNode.isLeaf) {
+            result.add(word + currNode.nodeChar);
         }
         for (TrieNode nextNode : currNode.children.values()) {
             if (nextNode != null) {
-                keysWithPrefix(result, word + currNode.c, nextNode);
+                keysWithPrefix(result, word + currNode.nodeChar, nextNode);
             }
         }
     }
@@ -90,18 +90,32 @@ public class MyTrieSet implements TrieSet61B {
      */
     @Override
     public String longestPrefixOf(String key) {
-        throw new UnsupportedOperationException();
+        if (!contains(key)) {
+            return null;
+        }
+        String longestPrefix = "";
+        String tempPrefix = "";
+        TrieNode currNode = root;
+        for (int i = 0; i < key.length(); i += 1) {
+            char c = key.charAt(i);
+            if (currNode.children.keySet().size() > 1) {
+                longestPrefix = tempPrefix;
+            }
+            tempPrefix += c;
+            currNode = currNode.children.get(c);
+        }
+        return longestPrefix;
     }
 
     private class TrieNode {
-        private char c;
-        private boolean isKey;
+        private char nodeChar;
+        private boolean isLeaf; // If it is a leaf node, then the nodeChar is a key.
         private Map<Character, TrieNode> children;
 
-        public TrieNode(char c, boolean isKey) {
-            this.c = c;
+        public TrieNode(char nodeChar, boolean isLeaf) {
+            this.nodeChar = nodeChar;
             children = new HashMap();
-            this.isKey = isKey;
+            this.isLeaf = isLeaf;
         }
 
     }
@@ -112,8 +126,14 @@ public class MyTrieSet implements TrieSet61B {
         trie.add("hello");
         trie.add("help");
         trie.add("zebra");
+        trie.add("homonym");
+        trie.add("homophone");
+        trie.add("homosexual");
 
         System.out.println(trie.contains("hello"));
         System.out.println(trie.keysWithPrefix("h"));
+        System.out.println(trie.longestPrefixOf("hello"));
+        System.out.println(trie.keysWithPrefix("homo"));
+        System.out.println(trie.longestPrefixOf("homophone"));
     }
 }
