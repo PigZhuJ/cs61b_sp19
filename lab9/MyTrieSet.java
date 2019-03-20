@@ -90,22 +90,45 @@ public class MyTrieSet implements TrieSet61B {
      */
     @Override
     public String longestPrefixOf(String key) {
+        String longestPrefix = "";
+        TrieNode currNode = root;
+        for (int i = 0; i < key.length(); i += 1) {
+            char c = key.charAt(i);
+            if (!currNode.children.containsKey(c)) {
+                return longestPrefix;
+            } else {
+                longestPrefix += c;
+                currNode = currNode.children.get(c);
+            }
+        }
+        return longestPrefix;
+    }
+
+
+    /**
+     * Return the longest common prefix of the given key in the Trie.
+     */
+    /*
+    public String longestCommonPrefixOf(String key) {
         if (!contains(key)) {
             throw new IllegalArgumentException();
         }
-        String longestPrefix = "";
+        String longestCommonPrefix = "";
         String tempPrefix = "";
         TrieNode currNode = root;
         for (int i = 0; i < key.length(); i += 1) {
             char c = key.charAt(i);
             if (currNode.children.keySet().size() > 1) {
-                longestPrefix = tempPrefix;
+                longestCommonPrefix = tempPrefix;
             }
             tempPrefix += c;
             currNode = currNode.children.get(c);
         }
-        return longestPrefix;
+        return longestCommonPrefix;
     }
+    */
+
+
 
     private class TrieNode {
         private char nodeChar;
@@ -120,7 +143,8 @@ public class MyTrieSet implements TrieSet61B {
 
     }
 
-    /*public static void main(String[] args) {
+    /*
+    public static void main(String[] args) {
         MyTrieSet trie = new MyTrieSet();
         trie.add("hi");
         trie.add("hello");
@@ -130,10 +154,13 @@ public class MyTrieSet implements TrieSet61B {
         trie.add("homophone");
         trie.add("homosexual");
 
-        System.out.println(trie.contains("hello"));
-        System.out.println(trie.keysWithPrefix("h"));
-        System.out.println(trie.longestPrefixOf("hello"));
-        System.out.println(trie.keysWithPrefix("homo"));
-        System.out.println(trie.longestPrefixOf("homophone"));
-    }*/
+        System.out.println(trie.contains("hello")); // expect true
+        System.out.println(trie.keysWithPrefix("h")); // expect [help, hello, hi, homophone, homosexual, homonym]
+        System.out.println(trie.longestCommonPrefixOf("hello")); // expect hel
+        System.out.println(trie.keysWithPrefix("homo")); // expect [homophone, homosexual, homonym]
+        System.out.println(trie.longestCommonPrefixOf("homophone")); // expect homo
+        System.out.println(trie.longestPrefixOf("helpful")); // expect help
+        System.out.println(trie.longestPrefixOf("homogeneous")); // expect homo
+    }
+    */
 }
