@@ -57,7 +57,7 @@ public class MyTrieSet implements TrieSet61B {
     @Override
     public List<String> keysWithPrefix(String prefix) {
         if (prefix == null || prefix.length() == 0 || root == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
         List<String> result = new ArrayList<>();
         TrieNode startNode = root;
@@ -91,7 +91,7 @@ public class MyTrieSet implements TrieSet61B {
     @Override
     public String longestPrefixOf(String key) {
         if (!contains(key)) {
-            return "";
+            throw new IllegalArgumentException();
         }
         String longestPrefix = "";
         String tempPrefix = "";
@@ -120,7 +120,7 @@ public class MyTrieSet implements TrieSet61B {
 
     }
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         MyTrieSet trie = new MyTrieSet();
         trie.add("hi");
         trie.add("hello");
@@ -135,5 +135,5 @@ public class MyTrieSet implements TrieSet61B {
         System.out.println(trie.longestPrefixOf("hello"));
         System.out.println(trie.keysWithPrefix("homo"));
         System.out.println(trie.longestPrefixOf("homophone"));
-    }*/
+    }
 }
