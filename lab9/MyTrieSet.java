@@ -91,7 +91,7 @@ public class MyTrieSet implements TrieSet61B {
     @Override
     public String longestPrefixOf(String key) {
         if (!contains(key)) {
-            return null;
+            return "";
         }
         String longestPrefix = "";
         String tempPrefix = "";
