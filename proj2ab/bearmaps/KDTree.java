@@ -1,6 +1,5 @@
 package bearmaps;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class KDTree implements PointSet {
@@ -16,23 +15,19 @@ public class KDTree implements PointSet {
 
     // Insert points into the KDTree.
     private void insert(Point point) {
-        root = insert(point, root, false, 0.0, 0.0, 1.0, 1.0);
+        root = insert(point, root, true);
     }
 
-    private Node insert(Point point, Node node, boolean isVertical,
-                        double minX, double minY, double maxX, double maxY) {
+    private Node insert(Point point, Node node, boolean isNodeSplitX) {
         if (node == null) {
-            return new Node(point, new Region(minX, minY, maxX, maxY));
+            return new Node(point);
         }
-        isVertical = !isVertical;
-        double pointPos = isVertical ? point.getX() : point.getY();
-        double nodePos = isVertical ? node.getPoint().getX() : node.getPoint().getY();
+        double pointPos = isNodeSplitX ? point.getX() : point.getY();
+        double nodePos = isNodeSplitX ? node.getPoint().getX() : node.getPoint().getY();
         if (pointPos < nodePos) {
-            node.left = insert(point, node.getLeft(), isVertical, minX, minY,
-                    isVertical ? node.getPoint().getX() : maxX, isVertical ? maxY : node.getPoint().getY());
+            node.left = insert(point, node.getLeft(), !isNodeSplitX);
         } else {
-            node.right = insert(point, node.getRight(), isVertical,
-                    isVertical ? node.getPoint().getX() : minX, isVertical ? minY : node.getPoint().getY(), maxX, maxY);
+            node.right = insert(point, node.getRight(), !isNodeSplitX);
         }
         return node;
     }
@@ -40,60 +35,56 @@ public class KDTree implements PointSet {
     @Override
     public Point nearest(double x, double y) {
         Point target = new Point(x, y);
-        return nearest(target, root, null, false);
+        return nearest(target, root, root.getPoint(), true);
     }
 
-    private Point nearest(Point target, Node node, Point currNearest, boolean isVertical) {
+    private Point nearest(Point target, Node node, Point globalNearest, boolean isNodeSplitX) {
         if (node == null) {
-            return currNearest;
+            return globalNearest;
         }
-        isVertical = !isVertical;
-        double targetPos = isVertical ? target.getX() : target.getY();
-        double nodePos = isVertical ? node.getPoint().getX() : node.getPoint().getY();
+        double targetPos = isNodeSplitX ? target.getX() : target.getY();
+        double nodePos = isNodeSplitX ? node.getPoint().getX() : node.getPoint().getY();
 
         // Search the nearest point in the region where target locates.
-        Node nextNode = targetPos < nodePos ? node.getLeft() : node.getRight();
-        Node otherNode = targetPos < nodePos ? node.getRight() : node.getLeft();
-        Point nextNearest = nearest(target, nextNode, node.getPoint(), isVertical);
-        double currDist = 0;
-        double nextDist = Point.distance(target, nextNearest);
-        if (currNearest == null) {
-            currNearest = nextNearest;
-            currDist = nextDist;
-        } else {
-            currDist = Point.distance(target, currNearest);
-            if (nextDist < currDist) {
-                currNearest = nextNearest;
-                currDist = nextDist;
+        Node goodNode = targetPos < nodePos ? node.getLeft() : node.getRight();
+        Node badNode = targetPos < nodePos ? node.getRight() : node.getLeft();
+        if (goodNode != null) {
+            double currDist = Point.distance(target, globalNearest);
+            double goodDist = Point.distance(target, goodNode.getPoint());
+            if (goodDist < currDist) {
+                globalNearest = goodNode.getPoint();
+            }
+            globalNearest = nearest(target, goodNode, globalNearest, !isNodeSplitX);
+        }
+
+        // Search the nearest point in the another half region.
+        if (badNode != null) {
+            double nearestDist = Point.distance(target, globalNearest);
+            double virtualX = isNodeSplitX ? node.getPoint().getX() : target.getX();
+            double virtualY = isNodeSplitX ? target.getY() : node.getPoint().getY();
+            Point virtualPoint = new Point(virtualX, virtualY);
+            double virtualDist = Point.distance(target, virtualPoint);
+            if (virtualDist < nearestDist) {
+                globalNearest = nearest(target, badNode, globalNearest, !isNodeSplitX);
             }
         }
-        // Search the nearest point in the another half region.
-        if ((otherNode != null) && (otherNode.getRegion().distanceToPoint(target) < currDist)) {
-            currNearest = nearest(target, otherNode, currNearest, isVertical);
-        }
-        return currNearest;
+        return globalNearest;
     }
 
     private class Node {
 
         private Point point;
-        private Region region;
         private Node left;
         private Node right;
 
-        public Node(Point point, Region region) {
+        public Node(Point point) {
             this.point = point;
-            this.region = region;
             left = null;
             right = null;
         }
 
         public Point getPoint() {
             return point;
-        }
-
-        public Region getRegion() {
-            return region;
         }
 
         public Node getLeft() {
@@ -105,43 +96,7 @@ public class KDTree implements PointSet {
         }
     }
 
-    private class Region {
 
-        private double minX;
-        private double minY;
-        private double maxX;
-        private double maxY;
-
-        public Region(double minX, double minY, double maxX, double maxY) {
-            this.minX = minX;
-            this.minY = minY;
-            this.maxX = maxX;
-            this.maxY = maxY;
-        }
-
-        public boolean contains(Point point) {
-            return (point.getX() >= minX) && (point.getX() <= maxX)
-                && (point.getY() >= minY) && (point.getY() <= maxY);
-        }
-
-        public double distanceToPoint(Point point) {
-            double dx = 0.0;
-            double dy = 0.0;
-            if (point.getX() < minX) {
-                dx = minX - point.getX();
-            } else if (point.getX() > maxX) {
-                dx = point.getX() - maxX;
-            }
-            if (point.getY() < minY) {
-                dy = minY - point.getY();
-            } else if (point.getY() > maxY) {
-                dy = point.getY() - maxY;
-            }
-            return Math.pow(dx, 2) + Math.pow(dy, 2);
-        }
-    }
-
-    /*
     public static void main(String[] args) {
         Point p1 = new Point(1.1, 2.2); // constructs a Point with x = 1.1, y = 2.2
         Point p2 = new Point(3.3, 4.4);
@@ -151,5 +106,5 @@ public class KDTree implements PointSet {
         Point nearestPoint = kdTree.nearest(3.0, 4.0); // returns p2
         System.out.println(nearestPoint.getX() + " and " + nearestPoint.getY()); // evaluates to 3.3 and 4.4;
     }
-    */
+
 }
