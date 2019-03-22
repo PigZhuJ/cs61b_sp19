@@ -103,8 +103,8 @@ public class KDTree implements PointSet {
         Point p3 = new Point(-2.9, 4.2);
         KDTree kdTree = new KDTree(List.of(p1, p2, p3));
 
-        Point nearestPoint = kdTree.nearest(3.0, 4.0); // returns p2
-        System.out.println(nearestPoint.getX() + " and " + nearestPoint.getY()); // evaluates to 3.3 and 4.4;
+        Point nearest = kdTree.nearest(3.0, 4.0); // returns p2
+        System.out.println(nearest.getX() + " and " + nearest.getY()); // evaluates to 3.3 and 4.4;
     }
     */
 
