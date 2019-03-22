@@ -57,7 +57,7 @@ public class KDTree implements PointSet {
             globalNearest = nearest(target, goodNode, globalNearest, !isNodeSplitX);
         }
 
-        // Search the nearest point in the another half region.
+        // Search the nearest point in the another half region if possible.
         if (badNode != null) {
             double nearestDist = Point.distance(target, globalNearest);
             double virtualX = isNodeSplitX ? node.getPoint().getX() : target.getX();
@@ -77,26 +77,26 @@ public class KDTree implements PointSet {
         private Node left;
         private Node right;
 
-        public Node(Point point) {
+        private Node(Point point) {
             this.point = point;
             left = null;
             right = null;
         }
 
-        public Point getPoint() {
+        private Point getPoint() {
             return point;
         }
 
-        public Node getLeft() {
+        private Node getLeft() {
             return left;
         }
 
-        public Node getRight() {
+        private Node getRight() {
             return right;
         }
     }
 
-
+    /*
     public static void main(String[] args) {
         Point p1 = new Point(1.1, 2.2); // constructs a Point with x = 1.1, y = 2.2
         Point p2 = new Point(3.3, 4.4);
@@ -106,5 +106,6 @@ public class KDTree implements PointSet {
         Point nearestPoint = kdTree.nearest(3.0, 4.0); // returns p2
         System.out.println(nearestPoint.getX() + " and " + nearestPoint.getY()); // evaluates to 3.3 and 4.4;
     }
+    */
 
 }
