@@ -42,7 +42,9 @@ public class SeparableEnemySolver {
         colors.put(label, color);
         for (String neighbor : g.neighbors(label)) {
             if (!neighbor.equals(parent)) {
-                return isBipartite(neighbor, colors, -1 * color, label);
+                if (!isBipartite(neighbor, colors, -1 * color, label)) {
+                    return false;
+                }
             }
         }
         return true;
