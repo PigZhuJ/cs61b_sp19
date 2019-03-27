@@ -1,9 +1,13 @@
+import java.util.LinkedList;
+import java.util.Queue;
 /**
  * A String-like class that allows users to add and remove characters in the String
  * in constant time and have a constant-time hash function. Used for the Rabin-Karp
  * string-matching algorithm.
  */
 class RollingString{
+
+    private Queue<Character> rollQueue;
 
     /**
      * Number of total possible int values a character can take on.
@@ -23,7 +27,11 @@ class RollingString{
      */
     public RollingString(String s, int length) {
         assert(s.length() == length);
-        /* FIX ME */
+        /* FIXED */
+        rollQueue = new LinkedList<>();
+        for (char c : s.toCharArray()) {
+            rollQueue.offer(c);
+        }
     }
 
     /**
@@ -32,7 +40,9 @@ class RollingString{
      * Should be a constant-time operation.
      */
     public void addChar(char c) {
-        /* FIX ME */
+        /* FIXED */
+        rollQueue.offer(c);
+        rollQueue.poll();
     }
 
 
@@ -43,8 +53,11 @@ class RollingString{
      */
     public String toString() {
         StringBuilder strb = new StringBuilder();
-        /* FIX ME */
-        return "";
+        /* FIXED */
+        for (char c : rollQueue) {
+            strb.append(c);
+        }
+        return strb.toString();
     }
 
     /**
@@ -52,8 +65,8 @@ class RollingString{
      * Should be a constant-time operation.
      */
     public int length() {
-        /* FIX ME */
-        return -1;
+        /* FIXED */
+        return rollQueue.size();
     }
 
 
@@ -64,8 +77,8 @@ class RollingString{
      */
     @Override
     public boolean equals(Object o) {
-        /* FIX ME */
-        return false;
+        /* FIXED */
+        return this.toString().equals(o.toString());
     }
 
     /**
@@ -74,7 +87,22 @@ class RollingString{
      */
     @Override
     public int hashCode() {
-        /* FIX ME */
-        return -1;
+        /* FIXED */
+        int hash = 0;
+        for (char c : rollQueue) {
+            hash = (hash * UNIQUECHARS + (int) c) % PRIMEBASE;
+        }
+        return hash;
     }
+
+    /*
+    public static void main(String[] args) {
+        RollingString rs = new RollingString("apple", 5);
+        rs.addChar('p');
+        rs.addChar('t');
+        System.out.println(rs.toString());
+        RollingString rs2 = new RollingString("plept", 5);
+        System.out.println(rs.equals(rs2));
+    }
+    */
 }
