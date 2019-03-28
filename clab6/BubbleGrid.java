@@ -1,6 +1,14 @@
 /**
  * 1. The hit one is 0, it can connect nothing to the ceiling.
- * 2. The hit one is 1, but it cannot connect to top
+ * 2. The hit one is 1, but it cannot connect to top, then no
+ * one can connect to top by it.
+ * 3. The hit one is 1, it can connect to the ceiling, but the near
+ * ones can connect to the ceiling by other bubbles too; for this case
+ * when remove the hit one, ones that connected to it will not drop.
+ * 4. The hit one is 1, it can connect to the ceiling, and the near
+ * ones can connect to the ceiling by it and there are no other ways
+ * for them to connect to the ceiling; for this case, there will be
+ * some bubbles drop after the hit one been removed.
  */
 public class BubbleGrid {
     private int[][] grid;
