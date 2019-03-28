@@ -77,6 +77,9 @@ public class BubbleGrid {
     }
 
     private void unionNeighbors(int row, int col, int[][] grid, UnionFind uf) {
+        if (row == 0) {
+            uf.union(xyTo1D(row, col), ceiling);
+        }
         for (int[] dir : dirs) {
             int adjRow = row + dir[0];
             int adjCol = col + dir[1];
@@ -84,9 +87,6 @@ public class BubbleGrid {
                 continue;
             }
             uf.union(xyTo1D(row, col), xyTo1D(adjRow, adjCol));
-        }
-        if (row == 0) {
-            uf.union(xyTo1D(row, col), ceiling);
         }
     }
 
