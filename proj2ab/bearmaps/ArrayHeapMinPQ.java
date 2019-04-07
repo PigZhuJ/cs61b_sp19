@@ -7,13 +7,11 @@ import java.util.NoSuchElementException;
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private ArrayList<PriorityNode> itemPQ;
-    private HashMap<T, Integer> itemIndexMap;
-    private int size;
+    private HashMap<T, Integer> itemMapIndex;
 
     public ArrayHeapMinPQ() {
         itemPQ =  new ArrayList<>();
-        itemIndexMap = new HashMap<>();
-        size = 0;
+        itemMapIndex = new HashMap<>();
     }
 
     /* Adds an item with the given priority value. Throws an
@@ -25,10 +23,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             throw new IllegalArgumentException();
         }
         itemPQ.add(new PriorityNode(item, priority));
-        itemIndexMap.put(item, size());
-        size += 1;
-        int currPos = size() - 1;
-        climb(currPos);
+        itemMapIndex.put(item, size() - 1);
+        climb(size() - 1);
     }
 
     /* Returns true if the PQ contains the given item. */
@@ -37,7 +33,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         if (isEmpty()) {
             return false;
         }
-        return itemIndexMap.containsKey(item);
+        return itemMapIndex.containsKey(item);
     }
 
     /* Returns the minimum item. Throws NoSuchElementException if the PQ is empty. */
@@ -56,9 +52,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             throw new NoSuchElementException();
         }
         T toRemove = itemPQ.get(0).getItem();
-        itemIndexMap.remove(toRemove);
         swap(0, size() - 1);
-        size -= 1;
+        itemPQ.remove(size() - 1);
+        itemMapIndex.remove(toRemove);
         sink(0);
         return toRemove;
     }
@@ -66,7 +62,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     /* Returns the number of items in the PQ. */
     @Override
     public int size() {
-        return size;
+        return itemPQ.size();
     }
 
     /* Changes the priority of the given item. Throws NoSuchElementException if the item
@@ -76,17 +72,17 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         if (isEmpty() || !contains(item)) {
             throw new NoSuchElementException();
         }
-        int index = itemIndexMap.get(item);
+        int index = itemMapIndex.get(item);
         double oldPriority = itemPQ.get(index).getPriority();
         itemPQ.get(index).setPriority(priority);
-        if (Double.compare(oldPriority, priority) <= 0) {
+        if (oldPriority < priority) {
             sink(index);
         } else {
             climb(index);
         }
     }
 
-    private class PriorityNode implements Comparable<PriorityNode> {
+    private class PriorityNode {
 
         private T item;
         private double priority;
@@ -107,32 +103,10 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         void setPriority(double priority) {
             this.priority = priority;
         }
-
-        @Override
-        public int compareTo(PriorityNode other) {
-            if (other == null) {
-                return -1;
-            }
-            return Double.compare(this.getPriority(), other.getPriority());
-        }
-
-        // Equal items do not need to have same priority.
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || o.getClass() != this.getClass()) {
-                return false;
-            } else {
-                return ((PriorityNode) o).getItem().equals(this.getItem());
-            }
-        }
-        @Override
-        public int hashCode() {
-            return item.hashCode();
-        }
     }
 
     private boolean isEmpty() {
-        return size == 0;
+        return size() == 0;
     }
 
     // Return the index of parent of current node.
@@ -179,17 +153,16 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     // Swap two nodes.
     private void swap(int i, int j) {
-        PriorityNode iTemp = itemPQ.get(i);
-        PriorityNode jTemp = itemPQ.get(j);
-        itemIndexMap.replace(iTemp.getItem(), j);
-        itemIndexMap.replace(jTemp.getItem(), i);
-        itemPQ.set(i, jTemp);
-        itemPQ.set(j, iTemp);
+        PriorityNode temp = itemPQ.get(i);
+        itemPQ.set(i, itemPQ.get(j));
+        itemPQ.set(j, temp);
+        itemMapIndex.put(itemPQ.get(i).getItem(), i);
+        itemMapIndex.put(itemPQ.get(j).getItem(), j);
     }
 
     // Return true if ith node has smaller priority than jth node.
     private boolean smaller(int i, int j) {
-        return itemPQ.get(i).compareTo(itemPQ.get(j)) < 0;
+        return itemPQ.get(i).getPriority() < itemPQ.get(j).getPriority();
     }
 
 }
