@@ -2,8 +2,7 @@ package bearmaps.hw4;
 
 import bearmaps.proj2ab.ArrayHeapMinPQ;
 import edu.princeton.cs.algs4.Stopwatch;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,9 +11,9 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
     private HashMap<Vertex, Double> distToStart = new HashMap<>();
     private HashMap<Vertex, Double> distToEnd = new HashMap<>();
     private HashMap<Vertex, Double> vertexMapWeight = new HashMap<>();
-    private HashMap<Vertex, Vertex> edgeTo = new HashMap<>();
+    private HashMap<Vertex, Vertex> shortestEdgeTo = new HashMap<>();
     private SolverOutcome outcome;
-    private List<Vertex> solution = new ArrayList<>();
+    private List<Vertex> solution;
     private double solutionWeight = 0;
     private int numStatesExplored = 0;
     private double explorationTime;
@@ -43,15 +42,15 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
                 outcome = SolverOutcome.SOLVED;
 
                 // Add vertex to solution.
+                LinkedList<Vertex> sol = new LinkedList<>();
                 Vertex curVertex = PQ.getSmallest();
-                solution.add(curVertex);
+                sol.addFirst(curVertex);
                 while (!curVertex.equals(start)) {
-                    solution.add(edgeTo.get(curVertex));
+                    sol.addFirst(shortestEdgeTo.get(curVertex));
                     solutionWeight += vertexMapWeight.get(curVertex);
-                    curVertex = edgeTo.get(curVertex);
+                    curVertex = shortestEdgeTo.get(curVertex);
                 }
-                // Since solution add vertex from end back to start.
-                Collections.reverse(solution);
+                solution = sol;
 
                 explorationTime = sw.elapsedTime();
                 return;
@@ -64,7 +63,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
             explorationTime = sw.elapsedTime();
             if (explorationTime > timeout) {
                 outcome = SolverOutcome.TIMEOUT;
-                solution = new ArrayList<>();
+                solution = new LinkedList<>();
                 solutionWeight = 0;
                 return;
             }
@@ -87,7 +86,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
                     distToStart.put(dest, distToStart.get(source) + weight);
 
                     // Update the edge used by the dest vertex.
-                    edgeTo.put(dest, source);
+                    shortestEdgeTo.put(dest, source);
 
                     // Update the corresponding weight of the edge.
                     vertexMapWeight.put(dest, weight);
@@ -100,7 +99,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
             }
         }
         outcome = SolverOutcome.UNSOLVABLE;
-        solution = new ArrayList<>();
+        solution = new LinkedList<>();
         solutionWeight = 0;
         explorationTime = sw.elapsedTime();
     }
