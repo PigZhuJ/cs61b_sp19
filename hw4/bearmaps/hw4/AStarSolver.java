@@ -1,9 +1,9 @@
 package bearmaps.hw4;
 
 import bearmaps.proj2ab.ArrayHeapMinPQ;
-import bearmaps.proj2ab.DoubleMapPQ;
 import edu.princeton.cs.algs4.Stopwatch;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,12 +12,13 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
     private HashMap<Vertex, Double> distToStart = new HashMap<>();
     private HashMap<Vertex, Double> distToEnd = new HashMap<>();
     private HashMap<Vertex, Double> vertexMapWeight = new HashMap<>();
+    private HashMap<Vertex, Vertex> edgeTo = new HashMap<>();
     private SolverOutcome outcome;
     private List<Vertex> solution = new ArrayList<>();
     private double solutionWeight = 0;
     private int numStatesExplored = 0;
     private double explorationTime;
-    private final static double INF = Double.POSITIVE_INFINITY;
+    private final double INF = Double.POSITIVE_INFINITY;
 
     /**
      * Constructor which finds the solution, computing everything necessary
@@ -40,15 +41,23 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
             // Check whether the end is reached or not.
             if (PQ.getSmallest().equals(end)) {
                 outcome = SolverOutcome.SOLVED;
-                solution.add(PQ.getSmallest());
-                solutionWeight += vertexMapWeight.get(PQ.getSmallest());
+
+                // Add vertex to solution.
+                Vertex curVertex = PQ.getSmallest();
+                solution.add(curVertex);
+                while (!curVertex.equals(start)) {
+                    solution.add(edgeTo.get(curVertex));
+                    solutionWeight += vertexMapWeight.get(curVertex);
+                    curVertex = edgeTo.get(curVertex);
+                }
+                // Since solution add vertex from end back to start.
+                Collections.reverse(solution);
+
                 explorationTime = sw.elapsedTime();
                 return;
             }
 
-            List<WeightedEdge<Vertex>> neighborEdges = input.neighbors(PQ.getSmallest());
-            solution.add(PQ.getSmallest());
-            solutionWeight += vertexMapWeight.get(PQ.removeSmallest());
+            List<WeightedEdge<Vertex>> neighborEdges = input.neighbors(PQ.removeSmallest());
             numStatesExplored += 1;
 
             // Check time spent, if exceeds the timeout, return.
@@ -73,13 +82,15 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
                     distToEnd.put(dest, input.estimatedDistanceToGoal(dest, end));
                 }
 
-                if (!vertexMapWeight.containsKey(dest)) {
-                    vertexMapWeight.put(dest, weight);
-                }
-
                 // Relax all edges outgoing from source one at a time.
                 if (distToStart.get(source) + weight < distToStart.get(dest)) {
                     distToStart.put(dest, distToStart.get(source) + weight);
+
+                    // Update the edge used by the dest vertex.
+                    edgeTo.put(dest, source);
+
+                    // Update the corresponding weight of the edge.
+                    vertexMapWeight.put(dest, weight);
                     if (PQ.contains(dest)) {
                         PQ.changePriority(dest, distToStart.get(dest) + distToEnd.get(dest));
                     } else {

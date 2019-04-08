@@ -12,8 +12,8 @@ import bearmaps.hw4.SolutionPrinter;
  */
 public class DemoIntegerHopPuzzleSolution {
     public static void main(String[] args) {
-        int start = 1;
-        int goal = 5;
+        int start = 17;
+        int goal = 111;
 
         IntegerHopGraph ahg = new IntegerHopGraph();
 
