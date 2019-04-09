@@ -1,5 +1,6 @@
 package bearmaps.hw4.slidingpuzzle;
 
+import bearmaps.hw4.AStarSolver;
 import bearmaps.hw4.LazySolver;
 import bearmaps.hw4.ShortestPathsSolver;
 import bearmaps.hw4.SolutionPrinter;
@@ -22,7 +23,7 @@ public class DemoRunSeveralPuzzles {
 
     public static void main(String[] args) {
 
-        String[] puzzleFiles = hardPuzzles;
+        String[] puzzleFiles = basicPuzzles;
 
         System.out.println(puzzleFiles.length + " puzzle files being run.");
         for (int i = 0; i < puzzleFiles.length; i += 1) {
@@ -32,7 +33,7 @@ public class DemoRunSeveralPuzzles {
 
             BoardGraph spg = new BoardGraph();
             System.out.println(puzzleFiles[i] + ":");
-            ShortestPathsSolver<Board> solver = new LazySolver<>(spg, start, goal, 30);
+            ShortestPathsSolver<Board> solver = new AStarSolver<>(spg, start, goal, 30);
             SolutionPrinter.summarizeOutcome(solver);
         }
 

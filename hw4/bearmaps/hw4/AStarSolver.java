@@ -12,7 +12,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
     private HashMap<Vertex, Double> distToStart = new HashMap<>();
     private HashMap<Vertex, Double> distToEnd = new HashMap<>();
     private HashMap<Vertex, Double> vertexMapWeight = new HashMap<>();
-    private HashMap<Vertex, Vertex> shortestEdgeTo = new HashMap<>();
+    private HashMap<Vertex, Vertex> edgeTo = new HashMap<>();
     private SolverOutcome outcome;
     private List<Vertex> solution = new ArrayList<>();
     private double solutionWeight = 0;
@@ -46,9 +46,9 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
                 Vertex curVertex = PQ.getSmallest();
                 solution.add(curVertex);
                 while (!curVertex.equals(start)) {
-                    solution.add(shortestEdgeTo.get(curVertex));
+                    solution.add(edgeTo.get(curVertex));
                     solutionWeight += vertexMapWeight.get(curVertex);
-                    curVertex = shortestEdgeTo.get(curVertex);
+                    curVertex = edgeTo.get(curVertex);
                 }
                 // Since solution add vertex from end back to start.
                 Collections.reverse(solution);
@@ -87,7 +87,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
                     distToStart.put(dest, distToStart.get(source) + weight);
 
                     // Update the edge used by the dest vertex.
-                    shortestEdgeTo.put(dest, source);
+                    edgeTo.put(dest, source);
 
                     // Update the corresponding weight of the edge.
                     vertexMapWeight.put(dest, weight);
