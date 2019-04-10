@@ -10,12 +10,11 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
     private ArrayHeapMinPQ<Vertex> PQ = new ArrayHeapMinPQ<>();
     private HashMap<Vertex, Double> distToStart = new HashMap<>();
     private HashMap<Vertex, Double> distToEnd = new HashMap<>();
-    private HashMap<Vertex, Double> vertexMapWeight = new HashMap<>();
     private HashMap<Vertex, Vertex> edgeTo = new HashMap<>();
     private SolverOutcome outcome;
     private LinkedList<Vertex> solution = new LinkedList<>();
-    private double solutionWeight = 0;
-    private int numStatesExplored = 0;
+    private double solutionWeight;
+    private int numStatesExplored;
     private double explorationTime;
     private final double INF = Double.POSITIVE_INFINITY;
 
@@ -32,7 +31,6 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
     public AStarSolver(AStarGraph<Vertex> input, Vertex start, Vertex end, double timeout) {
         Stopwatch sw = new Stopwatch();
         distToStart.put(start, 0.0);
-        vertexMapWeight.put(start, 0.0);
         PQ.add(start, distToStart.get(start));
 
         while (PQ.size() != 0) {
@@ -40,13 +38,13 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
             // Check whether the end is reached or not.
             if (PQ.getSmallest().equals(end)) {
                 outcome = SolverOutcome.SOLVED;
+                solutionWeight = distToStart.get(end);
 
                 // Add vertex to solution.
                 Vertex curVertex = PQ.getSmallest();
                 solution.addFirst(curVertex);
                 while (!curVertex.equals(start)) {
                     solution.addFirst(edgeTo.get(curVertex));
-                    solutionWeight += vertexMapWeight.get(curVertex);
                     curVertex = edgeTo.get(curVertex);
                 }
 
@@ -85,9 +83,6 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
 
                     // Update the edge used by the dest vertex.
                     edgeTo.put(dest, source);
-
-                    // Update the corresponding weight of the edge.
-                    vertexMapWeight.put(dest, weight);
 
                     if (PQ.contains(dest)) {
                         PQ.changePriority(dest, distToStart.get(dest) + distToEnd.get(dest));
