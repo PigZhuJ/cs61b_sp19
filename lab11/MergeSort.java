@@ -91,6 +91,9 @@ public class MergeSort {
             Queue<Item> items) {
         // Your code here!
         // Done.
+        if (items.size() <= 1) {
+            return items;
+        }
         Queue<Queue<Item>> singleItemQueues = makeSingleItemQueues(items);
         Queue<Item> q1;
         Queue<Item> q2;
