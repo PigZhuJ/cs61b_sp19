@@ -80,19 +80,21 @@ public class QuickSort {
             Queue<Item> items) {
         // Your code here!
         // Done.
+        if (items.size() <= 1) {
+            return items;
+        }
+
         Item pivot = getRandomItem(items);
         Queue<Item> less = new Queue<>();
         Queue<Item> equal = new Queue<>();
         Queue<Item> greater = new Queue<>();
 
-        if (items.size() > 1) {
-            partition(items, pivot, less, equal, greater);
-            if (less.size() > 1) {
-                less = quickSort(less);
-            }
-            if (greater.size() > 1) {
-                greater = quickSort(greater);
-            }
+        partition(items, pivot, less, equal, greater);
+        if (less.size() > 1) {
+            less = quickSort(less);
+        }
+        if (greater.size() > 1) {
+            greater = quickSort(greater);
         }
 
         Queue<Item> sorted = catenate(less, equal);
