@@ -90,12 +90,8 @@ public class QuickSort {
         Queue<Item> greater = new Queue<>();
 
         partition(items, pivot, less, equal, greater);
-        if (less.size() > 1) {
-            less = quickSort(less);
-        }
-        if (greater.size() > 1) {
-            greater = quickSort(greater);
-        }
+        less = quickSort(less);
+        greater = quickSort(greater);
 
         Queue<Item> sorted = catenate(less, equal);
         sorted = catenate(sorted, greater);
