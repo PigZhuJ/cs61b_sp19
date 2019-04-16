@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static bearmaps.proj2c.utils.Constants.SEMANTIC_STREET_GRAPH;
-import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
+import static bearmaps.proj2c.utils.Constants.*;
 
 /**
  * Handles requests from the web browser for map images. These images
@@ -84,12 +83,128 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
+//        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+//        System.out.println(requestParams);
+//        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+//                + "your browser.");
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
+        String[][] renderGrid;
+        double rasterULLon; // upper left x
+        double rasterULLat; // upper left y
+        double rasterLRLon; // lower right x
+        double rasterLRLat; // lower right y
+        int depth;
+        boolean querySuccess = true;
+
+        // Parse the request parameters.
+        double requestULLon = requestParams.get("ullon");
+        double requestULLat = requestParams.get("ullat");
+        double requestLRLon = requestParams.get("lrlon");
+        double requestLRLat = requestParams.get("lrlat");
+        double requestWidth = requestParams.get("w");
+        double requestHeight = requestParams.get("h");
+
+        // Request grid is out of the whole image.
+        if (requestULLon < ROOT_ULLON || requestULLat > ROOT_ULLAT || requestLRLon > ROOT_LRLON
+                || requestLRLat < ROOT_LRLAT) {
+            querySuccess = false;
+        }
+        // Nonsense request grid.
+        if (requestULLon > requestLRLon || requestULLat < requestLRLat) {
+            querySuccess = false;
+        }
+        results.put("query_success", querySuccess);
+
+        // Find the optimal depth.
+        double requestLonDPP = (requestLRLon - requestULLon) / requestWidth;
+        depth = calcOptimalDepth(requestLonDPP);
+        results.put("depth", depth);
+
+        // Find the rastered parameters.
+        int rasterULLonNum = calcRasteredParamNum(depth, requestULLon, ROOT_ULLON, ROOT_LRLON, true);
+        rasterULLon = calcRasteredParam(depth, rasterULLonNum, ROOT_ULLON, ROOT_LRLON, true);
+        results.put("raster_ul_lon", rasterULLon);
+
+        int rasterULLatNum = calcRasteredParamNum(depth, requestULLat, ROOT_ULLAT, ROOT_LRLAT, true);
+        rasterULLat = calcRasteredParam(depth, rasterULLatNum, ROOT_ULLAT, ROOT_LRLAT, false);
+        results.put("raster_ul_lat", rasterULLat);
+
+        int rasterLRLonNum = calcRasteredParamNum(depth, requestLRLon, ROOT_ULLON, ROOT_LRLON, false);
+        rasterLRLon = calcRasteredParam(depth, rasterLRLonNum, ROOT_ULLON, ROOT_LRLON, true);
+        results.put("raster_lr_lon", rasterLRLon);
+
+        int rasterLRLatNum = calcRasteredParamNum(depth, requestLRLat, ROOT_ULLAT, ROOT_LRLAT, false);
+        rasterLRLat = calcRasteredParam(depth, rasterLRLatNum, ROOT_ULLAT, ROOT_LRLAT, false);
+        results.put("raster_lr_lat", rasterLRLat);
+
+        int rowNum = rasterLRLatNum - rasterULLatNum;
+        int colNum = rasterLRLonNum - rasterULLonNum;
+        renderGrid = new String[rowNum][colNum];
+        for (int i = 0; i < rowNum; i += 1) {
+            for (int j = 0; j < colNum; j += 1) {
+                renderGrid[i][j] = "d" + depth + "_x" + (j + rasterULLonNum) + "_y" + (i + rasterULLatNum) + ".png";
+            }
+        }
+        results.put("render_grid", renderGrid);
+
+
+
         return results;
+    }
+
+    /**
+     * Calculate the optimal depth using the LonDPP of the request.
+     */
+    private int calcOptimalDepth(double requestLonDPP) {
+        double baseLonDPP = (ROOT_LRLON - ROOT_ULLON) / TILE_SIZE;
+        // Take the log of base 0.5 to get the optimal depth.
+        // Always round up to fulfill the LonDPP requirement.
+        int optimalDepth = (int) Math.ceil((Math.log(requestLonDPP / baseLonDPP) / Math.log(0.5)));
+        if (optimalDepth < 7) {
+            return optimalDepth;
+        }
+        // Since the deepest depth is 7.
+        return 7;
+    }
+
+    /**
+     * Calculate the rasteredParamNum.
+     */
+    private int calcRasteredParamNum(int depth, double requestParam, double root_ul, double root_lr, boolean isUL) {
+        int bound = (int) Math.pow(2, depth) - 1;
+        double tileSize = Math.abs(root_ul - root_lr) / (bound + 1);
+
+        // Always find the difference relative to the root upper left corner.
+        double temp = Math.abs(requestParam - root_ul) / tileSize;
+        int rasteredParamNum;
+        if (isUL) {
+            rasteredParamNum = (int) Math.floor(temp);
+        } else {
+            rasteredParamNum = (int) Math.ceil(temp);
+        }
+
+        if (rasteredParamNum > bound) {
+            rasteredParamNum = bound;
+        }
+
+        return rasteredParamNum;
+    }
+
+    /**
+     * Calculate the rasteredParam based on the rasteredParamNum.
+     */
+    private double calcRasteredParam(int depth, int rasteredParamNum, double root_ul, double root_lr, boolean isLon) {
+        int bound = (int) Math.pow(2, depth) - 1;
+        double tileSize = Math.abs(root_ul - root_lr) / (bound + 1);
+        double rasteredParam;
+
+        // Always add based on the upper left corner lon or lat.
+        if (isLon) {
+            rasteredParam = root_ul + rasteredParamNum * tileSize;
+        } else {
+            rasteredParam = root_ul - rasteredParamNum * tileSize;
+        }
+        return rasteredParam;
     }
 
     @Override
