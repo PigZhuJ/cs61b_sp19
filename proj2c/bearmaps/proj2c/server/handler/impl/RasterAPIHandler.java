@@ -157,6 +157,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     private int calcOptimalDepth(double requestLonDPP) {
         double baseLonDPP = (ROOT_LRLON - ROOT_ULLON) / TILE_SIZE;
+
         // Take the log of base 0.5 to get the optimal depth.
         // Always round up to fulfill the LonDPP requirement.
         int optimalDepth = (int) Math.ceil((Math.log(requestLonDPP / baseLonDPP) / Math.log(0.5)));
@@ -170,39 +171,42 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
     /**
      * Calculate the rasteredParamNum.
      */
-    private int calcRasteredParamNum(int depth, double requestParam, double root_ul, double root_lr, boolean isUL) {
+    private int calcRasteredParamNum(int depth, double requestParam, double rootUL, double rootLR, boolean isUL) {
         int bound = (int) Math.pow(2, depth) - 1;
-        double tileSize = Math.abs(root_ul - root_lr) / (bound + 1);
+        double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
 
         // Always find the difference relative to the root upper left corner.
-        double temp = Math.abs(requestParam - root_ul) / tileSize;
+        double temp = Math.abs(requestParam - rootUL) / tileSize;
         int rasteredParamNum;
         if (isUL) {
+            // UpperLeft coordinate needs to round down.
             rasteredParamNum = (int) Math.floor(temp);
         } else {
+            // LowerRight coordinate needs to round up.
             rasteredParamNum = (int) Math.ceil(temp);
         }
 
         if (rasteredParamNum > bound) {
             rasteredParamNum = bound;
         }
-
         return rasteredParamNum;
     }
 
     /**
      * Calculate the rasteredParam based on the rasteredParamNum.
      */
-    private double calcRasteredParam(int depth, int rasteredParamNum, double root_ul, double root_lr, boolean isLon) {
+    private double calcRasteredParam(int depth, int rasteredParamNum, double rootUL, double rootLR, boolean isLon) {
         int bound = (int) Math.pow(2, depth) - 1;
-        double tileSize = Math.abs(root_ul - root_lr) / (bound + 1);
+        double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
         double rasteredParam;
 
         // Always add based on the upper left corner lon or lat.
         if (isLon) {
-            rasteredParam = root_ul + rasteredParamNum * tileSize;
+            // Lon increases from left to right.
+            rasteredParam = rootUL + rasteredParamNum * tileSize;
         } else {
-            rasteredParam = root_ul - rasteredParamNum * tileSize;
+            // Lat decreases from up to down.
+            rasteredParam = rootUL - rasteredParamNum * tileSize;
         }
         return rasteredParam;
     }
