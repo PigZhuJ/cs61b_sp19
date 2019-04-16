@@ -160,6 +160,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
 
         // Take the log of base 0.5 to get the optimal depth.
         // Always round up to fulfill the LonDPP requirement.
+        // Use the log change-of-base formula.
         int optimalDepth = (int) Math.ceil((Math.log(requestLonDPP / baseLonDPP) / Math.log(0.5)));
         if (optimalDepth < 7) {
             return optimalDepth;
@@ -169,10 +170,11 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
     }
 
     /**
-     * Calculate the rasteredParamNum.
+     * Calculate the corresponding grid number of the rastered parameter.
      */
     private int calcRasteredParamNum(int depth, double requestParam, double rootUL, double rootLR, boolean isUL) {
         int bound = (int) Math.pow(2, depth) - 1;
+        // Calculate the specific size (width or height) of each tile in current depth.
         double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
 
         // Always find the difference relative to the root upper left corner.
@@ -185,7 +187,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
             // LowerRight coordinate needs to round up.
             rasteredParamNum = (int) Math.ceil(temp);
         }
-
+        // Check whether reach the bound of the whole image.
         if (rasteredParamNum > bound) {
             rasteredParamNum = bound;
         }
@@ -193,14 +195,15 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
     }
 
     /**
-     * Calculate the rasteredParam based on the rasteredParamNum.
+     * Calculate the rastered parameter.
      */
     private double calcRasteredParam(int depth, int rasteredParamNum, double rootUL, double rootLR, boolean isLon) {
         int bound = (int) Math.pow(2, depth) - 1;
+        // Calculate the specific size (width or height) of each tile in current depth.
         double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
         double rasteredParam;
 
-        // Always add based on the upper left corner lon or lat.
+        // Always add or minus from the upper left corner lon or lat.
         if (isLon) {
             // Lon increases from left to right.
             rasteredParam = rootUL + rasteredParamNum * tileSize;
