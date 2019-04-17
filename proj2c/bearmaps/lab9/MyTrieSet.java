@@ -47,7 +47,7 @@ public class MyTrieSet implements TrieSet61B {
     @Override
     public void add(String key) {
 
-        if (key == null || key.length() == 0 || root == null) {
+        if (key == null || key.length() == 0) {
             return;
         }
 
