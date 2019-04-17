@@ -122,23 +122,23 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
 
         // Find the rastered parameters.
         int rasterULLonNum = calcRasteredParamNum(depth, requestULLon, ROOT_ULLON, ROOT_LRLON, true);
-        rasterULLon = calcRasteredParam(depth, rasterULLonNum, ROOT_ULLON, ROOT_LRLON, true);
+        rasterULLon = calcRasteredParam(depth, rasterULLonNum, ROOT_ULLON, ROOT_LRLON, true ,true);
         results.put("raster_ul_lon", rasterULLon);
 
         int rasterULLatNum = calcRasteredParamNum(depth, requestULLat, ROOT_ULLAT, ROOT_LRLAT, true);
-        rasterULLat = calcRasteredParam(depth, rasterULLatNum, ROOT_ULLAT, ROOT_LRLAT, false);
+        rasterULLat = calcRasteredParam(depth, rasterULLatNum, ROOT_ULLAT, ROOT_LRLAT, true, false);
         results.put("raster_ul_lat", rasterULLat);
 
         int rasterLRLonNum = calcRasteredParamNum(depth, requestLRLon, ROOT_ULLON, ROOT_LRLON, false);
-        rasterLRLon = calcRasteredParam(depth, rasterLRLonNum, ROOT_ULLON, ROOT_LRLON, true);
+        rasterLRLon = calcRasteredParam(depth, rasterLRLonNum, ROOT_ULLON, ROOT_LRLON, false, true);
         results.put("raster_lr_lon", rasterLRLon);
 
         int rasterLRLatNum = calcRasteredParamNum(depth, requestLRLat, ROOT_ULLAT, ROOT_LRLAT, false);
-        rasterLRLat = calcRasteredParam(depth, rasterLRLatNum, ROOT_ULLAT, ROOT_LRLAT, false);
+        rasterLRLat = calcRasteredParam(depth, rasterLRLatNum, ROOT_ULLAT, ROOT_LRLAT, false, false);
         results.put("raster_lr_lat", rasterLRLat);
 
-        int rowNum = rasterLRLatNum - rasterULLatNum;
-        int colNum = rasterLRLonNum - rasterULLonNum;
+        int rowNum = rasterLRLatNum - rasterULLatNum + 1;
+        int colNum = rasterLRLonNum - rasterULLonNum + 1;
         renderGrid = new String[rowNum][colNum];
         for (int i = 0; i < rowNum; i += 1) {
             for (int j = 0; j < colNum; j += 1) {
@@ -173,20 +173,20 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      * Calculate the corresponding grid number of the rastered parameter.
      */
     private int calcRasteredParamNum(int depth, double requestParam, double rootUL, double rootLR, boolean isUL) {
-        int bound = (int) Math.pow(2, depth) - 1;
+        int bound = (int) (Math.pow(2, depth) - 1);
         // Calculate the specific size (width or height) of each tile in current depth.
         double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
 
         // Always find the difference relative to the root upper left corner.
         double temp = Math.abs(requestParam - rootUL) / tileSize;
-        int rasteredParamNum;
-        if (isUL) {
-            // UpperLeft coordinate needs to round down.
-            rasteredParamNum = (int) Math.floor(temp);
-        } else {
-            // LowerRight coordinate needs to round up.
-            rasteredParamNum = (int) Math.ceil(temp);
-        }
+        int rasteredParamNum = (int) Math.floor(temp);
+//        if (isUL) {
+//            // UpperLeft coordinate needs to round down.
+//            rasteredParamNum = (int) Math.floor(temp);
+//        } else {
+//            // LowerRight coordinate needs to round up.
+//            rasteredParamNum = (int) Math.ceil(temp);
+//        }
         // Check whether reach the bound of the whole image.
         if (rasteredParamNum > bound) {
             rasteredParamNum = bound;
@@ -197,20 +197,33 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
     /**
      * Calculate the rastered parameter.
      */
-    private double calcRasteredParam(int depth, int rasteredParamNum, double rootUL, double rootLR, boolean isLon) {
-        int bound = (int) Math.pow(2, depth) - 1;
+    private double calcRasteredParam(int depth, int rasteredParamNum, double rootUL, double rootLR, boolean isUL, boolean isLon) {
+        int bound = (int) (Math.pow(2, depth) - 1);
         // Calculate the specific size (width or height) of each tile in current depth.
         double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
         double rasteredParam;
 
         // Always add or minus from the upper left corner lon or lat.
-        if (isLon) {
-            // Lon increases from left to right.
-            rasteredParam = rootUL + rasteredParamNum * tileSize;
+        if (isUL) {
+            if (isLon) {
+                rasteredParam = rootUL + rasteredParamNum * tileSize;
+            } else {
+                rasteredParam = rootUL - rasteredParamNum * tileSize;
+            }
         } else {
-            // Lat decreases from up to down.
-            rasteredParam = rootUL - rasteredParamNum * tileSize;
+            if (isLon) {
+                rasteredParam = rootUL + (rasteredParamNum + 1) * tileSize;
+            } else {
+                rasteredParam = rootUL - (rasteredParamNum + 1) * tileSize;
+            }
         }
+//        if (isLon) {
+//            // Lon increases from left to right.
+//            rasteredParam = rootUL + rasteredParamNum * tileSize;
+//        } else {
+//            // Lat decreases from up to down.
+//            rasteredParam = rootUL - rasteredParamNum * tileSize;
+//        }
         return rasteredParam;
     }
 
