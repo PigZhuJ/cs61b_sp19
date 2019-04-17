@@ -137,7 +137,7 @@ public class MyTrieSet implements TrieSet61B {
 
         public TrieNode(char nodeChar, boolean isLeaf) {
             this.nodeChar = nodeChar;
-            children = new HashMap();
+            children = new HashMap<>();
             this.isLeaf = isLeaf;
         }
 
