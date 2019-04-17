@@ -18,9 +18,9 @@ import java.util.*;
 public class AugmentedStreetMapGraph extends StreetMapGraph {
     private Map<Point, Long> pointToID;
     private KDTree kdTree;
+
     private MyTrieSet Trie;
-    private Map<String, String> cleanedToFull;
-    private Map<String, Long> nameToID;
+    private Map<String, List<Long>> cleanedNameToID;
 
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
@@ -29,22 +29,26 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         pointToID = new HashMap<>();
         List<Point> points = new ArrayList<>();
         List<Node> nodes = this.getNodes();
+
         Trie = new MyTrieSet();
-        cleanedToFull = new HashMap<>();
-        nameToID = new HashMap<>();
+        cleanedNameToID = new HashMap<>();
+        List<Long> idList = new ArrayList<>();
 
         for (Node node : nodes) {
             long id = node.id();
 
             // If the node has a name, clean it, then add it to the Trie,
-            // and put the (cleaned name, full name) pair into the cleanedToFull map,
-            // and put the (full name, id) pair into nameToID map.
+            // and put the (cleaned name, full name) pair into the cleanedToFull map.
             if (this.name(id) != null) {
                 String fullName = this.name(id);
                 String cleanedName = cleanString(fullName);
 
-                nameToID.put(fullName, id);
-                cleanedToFull.put(cleanedName, fullName);
+                if (cleanedNameToID.containsKey(cleanedName)) {
+                    idList = cleanedNameToID.get(cleanedName);
+                }
+                idList.add(id);
+                cleanedNameToID.put(cleanedName, idList);
+
                 Trie.add(cleanedName);
             }
 
@@ -81,7 +85,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     /**
      * For Project Part III (gold points)
      * In linear time, collect all the names of OSM locations that prefix-match the query string.
-     * @param prefix Prefix string to be searched for. Could be any case, with our without
+     * @param prefix Prefix string to be searched for. Could be any case, with or without
      *               punctuation.
      * @return A <code>List</code> of the full names of locations whose cleaned name matches the
      * cleaned <code>prefix</code>.
@@ -92,7 +96,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<String> matchedNames = Trie.keysWithPrefix(cleanedPrefix);
 
         for (String name : matchedNames) {
-            String fullMatched = cleanedToFull.get(name);
+            String fullMatched = this.name(cleanedNameToID.get(name).get(0));
 
             locations.add(fullMatched);
         }
@@ -119,23 +123,24 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         String cleanedLocationName = cleanString(locationName);
 
         // Return an empty list if no location name matches the locationName.
-        if (!cleanedToFull.containsKey(cleanedLocationName)) {
+        if (!cleanedNameToID.containsKey(cleanedLocationName)) {
             return new ArrayList<>();
         }
 
-        String name = cleanedToFull.get(cleanedLocationName);
-        locationInfo.put("name", name);
+        for (Long id : cleanedNameToID.get(cleanedLocationName)) {
+            locationInfo.put("id", id);
 
-        long id = nameToID.get(name);
-        locationInfo.put("id", id);
+            String name = this.name(id);
+            locationInfo.put("name", name);
 
-        double lon = this.lon(id);
-        locationInfo.put("lon", lon);
+            double lon = this.lon(id);
+            locationInfo.put("lon", lon);
 
-        double lat = this.lat(id);
-        locationInfo.put("lat", lat);
+            double lat = this.lat(id);
+            locationInfo.put("lat", lat);
 
-        locations.add(locationInfo);
+            locations.add(locationInfo);
+        }
 
         return locations;
     }
