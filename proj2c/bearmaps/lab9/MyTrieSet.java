@@ -25,33 +25,44 @@ public class MyTrieSet implements TrieSet61B {
         if (key == null || key.length() == 0 || root == null) {
             return false;
         }
+
         TrieNode currNode = root;
         TrieNode nextNode = null;
+
         for (int i = 0; i < key.length(); i += 1) {
             char c = key.charAt(i);
             nextNode = currNode.children.get(c);
+
             if (nextNode == null) {
                 return false;
             }
+
             currNode = nextNode;
         }
+
         return currNode.isLeaf;
     }
 
     /** Inserts string KEY into Trie */
     @Override
     public void add(String key) {
+
         if (key == null || key.length() == 0 || root == null) {
             return;
         }
+
         TrieNode currNode = root;
+
         for (int i = 0; i < key.length(); i += 1) {
             char c = key.charAt(i);
+
             if (!currNode.children.containsKey(c)) {
                 currNode.children.put(c, new TrieNode(c, false));
             }
+
             currNode = currNode.children.get(c);
         }
+
         currNode.isLeaf = true;
     }
 
@@ -61,17 +72,21 @@ public class MyTrieSet implements TrieSet61B {
         if (prefix == null || prefix.length() == 0 || root == null) {
             throw new IllegalArgumentException();
         }
+
         List<String> result = new ArrayList<>();
         TrieNode startNode = root;
+
         for (int i = 0; i < prefix.length(); i += 1) {
             char c = prefix.charAt(i);
             startNode = startNode.children.get(c);
         }
+
         for (TrieNode currNode : startNode.children.values()) {
             if (currNode != null) {
                 keysWithPrefix(result, prefix, currNode);
             }
         }
+
         return result;
     }
 
@@ -79,6 +94,7 @@ public class MyTrieSet implements TrieSet61B {
         if (currNode.isLeaf) {
             result.add(word + currNode.nodeChar);
         }
+
         for (TrieNode nextNode : currNode.children.values()) {
             if (nextNode != null) {
                 keysWithPrefix(result, word + currNode.nodeChar, nextNode);
@@ -94,8 +110,10 @@ public class MyTrieSet implements TrieSet61B {
     public String longestPrefixOf(String key) {
         String longestPrefix = "";
         TrieNode currNode = root;
+
         for (int i = 0; i < key.length(); i += 1) {
             char c = key.charAt(i);
+
             if (!currNode.children.containsKey(c)) {
                 return longestPrefix;
             } else {
@@ -103,6 +121,7 @@ public class MyTrieSet implements TrieSet61B {
                 currNode = currNode.children.get(c);
             }
         }
+
         return longestPrefix;
     }
 
