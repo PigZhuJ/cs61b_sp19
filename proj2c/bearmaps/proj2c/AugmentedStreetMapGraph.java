@@ -15,25 +15,18 @@ import java.util.*;
  * @author Alan Yao, Josh Hug, ________
  */
 public class AugmentedStreetMapGraph extends StreetMapGraph {
+    Map<Point, Long> pointToID;
+    List<Point> points;
+    List<Node> nodes;
+    KDTree kdTree;
 
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
         // You might find it helpful to uncomment the line below:
-        List<Node> nodes = this.getNodes();
-    }
-
-
-    /**
-     * For Project Part II
-     * Returns the vertex closest to the given longitude and latitude.
-     * @param lon The target longitude.
-     * @param lat The target latitude.
-     * @return The id of the node in the graph closest to the target.
-     */
-    public long closest(double lon, double lat) {
-        Map<Point, Long> pointToID = new HashMap<>();
-        List<Point> points = new ArrayList<>();
-        List<Node> nodes = this.getNodes();
+        // List<Node> nodes = this.getNodes();
+        pointToID = new HashMap<>();
+        points = new ArrayList<>();
+        nodes = this.getNodes();
 
         for (Node node : nodes) {
             long id = node.id();
@@ -47,7 +40,18 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
             }
         }
 
-        KDTree kdTree = new KDTree(points);
+        kdTree = new KDTree(points);
+    }
+
+
+    /**
+     * For Project Part II
+     * Returns the vertex closest to the given longitude and latitude.
+     * @param lon The target longitude.
+     * @param lat The target latitude.
+     * @return The id of the node in the graph closest to the target.
+     */
+    public long closest(double lon, double lat) {
         Point closestPoint = kdTree.nearest(lon, lat);
         return pointToID.get(closestPoint);
     }
