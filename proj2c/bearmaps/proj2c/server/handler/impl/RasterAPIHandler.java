@@ -104,11 +104,11 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         double requestWidth = requestParams.get("w");
         double requestHeight = requestParams.get("h");
 
-        // Request grid is out of the whole image.
-        if (Double.compare(requestULLon, ROOT_ULLON) < 0
-                || Double.compare(requestULLat, ROOT_ULLAT) > 0
-                || Double.compare(requestLRLon, ROOT_LRLON) > 0
-                || Double.compare(requestLRLat, ROOT_LRLAT) < 0) {
+        // Request grid is completely out of the whole image.
+        if (Double.compare(requestULLon, ROOT_LRLON) > 0
+                || Double.compare(requestULLat, ROOT_LRLAT) < 0
+                || Double.compare(requestLRLon, ROOT_ULLON) < 0
+                || Double.compare(requestLRLat, ROOT_ULLAT) > 0) {
             querySuccess = false;
         }
 
