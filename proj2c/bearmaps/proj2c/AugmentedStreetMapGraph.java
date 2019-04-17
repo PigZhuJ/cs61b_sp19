@@ -4,7 +4,6 @@ import bearmaps.hw4.streetmap.Node;
 import bearmaps.hw4.streetmap.StreetMapGraph;
 import bearmaps.proj2ab.KDTree;
 import bearmaps.proj2ab.Point;
-import bearmaps.lab9.MyTrieSet;
 
 import java.util.*;
 
@@ -19,8 +18,8 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     private Map<Point, Long> pointToID;
     private KDTree kdTree;
 
-    private MyTrieSet Trie;
-    private Map<String, List<Long>> cleanedNameToID;
+//    private MyTrieSet Trie;
+//    private Map<String, List<Long>> cleanedNameToID;
 
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
@@ -30,27 +29,27 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<Point> points = new ArrayList<>();
         List<Node> nodes = this.getNodes();
 
-        Trie = new MyTrieSet();
-        cleanedNameToID = new HashMap<>();
-        List<Long> idList = new ArrayList<>();
+//        Trie = new MyTrieSet();
+//        cleanedNameToID = new HashMap<>();
+//        List<Long> idList = new ArrayList<>();
 
         for (Node node : nodes) {
             long id = node.id();
 
             // If the node has a name, clean it, then add it to the Trie,
             // and put the (cleaned name, full name) pair into the cleanedToFull map.
-            if (this.name(id) != null) {
-                String fullName = this.name(id);
-                String cleanedName = cleanString(fullName);
-
-                if (cleanedNameToID.containsKey(cleanedName)) {
-                    idList = cleanedNameToID.get(cleanedName);
-                }
-                idList.add(id);
-                cleanedNameToID.put(cleanedName, idList);
-
-                Trie.add(cleanedName);
-            }
+//            if (this.name(id) != null) {
+//                String fullName = this.name(id);
+//                String cleanedName = cleanString(fullName);
+//
+//                if (cleanedNameToID.containsKey(cleanedName)) {
+//                    idList = cleanedNameToID.get(cleanedName);
+//                }
+//                idList.add(id);
+//                cleanedNameToID.put(cleanedName, idList);
+//
+//                Trie.add(cleanedName);
+//            }
 
             // Only consider the node that has neighbors,
             // and turn these nodes to Points to service
@@ -92,14 +91,14 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      */
     public List<String> getLocationsByPrefix(String prefix) {
         List<String> locations = new ArrayList<>();
-        String cleanedPrefix = cleanString(prefix);
-        List<String> matchedNames = Trie.keysWithPrefix(cleanedPrefix);
-
-        for (String name : matchedNames) {
-            String fullMatched = this.name(cleanedNameToID.get(name).get(0));
-
-            locations.add(fullMatched);
-        }
+//        String cleanedPrefix = cleanString(prefix);
+//        List<String> matchedNames = Trie.keysWithPrefix(cleanedPrefix);
+//
+//        for (String name : matchedNames) {
+//            String fullMatched = this.name(cleanedNameToID.get(name).get(0));
+//
+//            locations.add(fullMatched);
+//        }
 
         return locations;
     }
@@ -123,24 +122,24 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         String cleanedLocationName = cleanString(locationName);
 
         // Return an empty list if no location name matches the locationName.
-        if (!cleanedNameToID.containsKey(cleanedLocationName)) {
-            return new ArrayList<>();
-        }
-
-        for (Long id : cleanedNameToID.get(cleanedLocationName)) {
-            locationInfo.put("id", id);
-
-            String name = this.name(id);
-            locationInfo.put("name", name);
-
-            double lon = this.lon(id);
-            locationInfo.put("lon", lon);
-
-            double lat = this.lat(id);
-            locationInfo.put("lat", lat);
-
-            locations.add(locationInfo);
-        }
+//        if (!cleanedNameToID.containsKey(cleanedLocationName)) {
+//            return new ArrayList<>();
+//        }
+//
+//        for (Long id : cleanedNameToID.get(cleanedLocationName)) {
+//            locationInfo.put("id", id);
+//
+//            String name = this.name(id);
+//            locationInfo.put("name", name);
+//
+//            double lon = this.lon(id);
+//            locationInfo.put("lon", lon);
+//
+//            double lat = this.lat(id);
+//            locationInfo.put("lat", lat);
+//
+//            locations.add(locationInfo);
+//        }
 
         return locations;
     }
