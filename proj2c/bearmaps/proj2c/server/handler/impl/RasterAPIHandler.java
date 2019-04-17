@@ -109,10 +109,12 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
                 || requestLRLat < ROOT_LRLAT) {
             querySuccess = false;
         }
+
         // Nonsense request grid.
         if (requestULLon > requestLRLon || requestULLat < requestLRLat) {
             querySuccess = false;
         }
+
         results.put("query_success", querySuccess);
 
         // Find the optimal depth.
@@ -137,6 +139,8 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         rasterLRLat = calcRasteredParam(depth, rasterLRLatNum, ROOT_ULLAT, ROOT_LRLAT, false, false);
         results.put("raster_lr_lat", rasterLRLat);
 
+        // Add 1 here because the LRNum is underestimated 1 in the previous
+        // calcRasteredParamNum in order to correspond to image number.
         int rowNum = rasterLRLatNum - rasterULLatNum + 1;
         int colNum = rasterLRLonNum - rasterULLonNum + 1;
         renderGrid = new String[rowNum][colNum];
@@ -145,6 +149,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
                 renderGrid[i][j] = "d" + depth + "_x" + (j + rasterULLonNum) + "_y" + (i + rasterULLatNum) + ".png";
             }
         }
+
         results.put("render_grid", renderGrid);
 
 
@@ -165,6 +170,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         if (optimalDepth < 7) {
             return optimalDepth;
         }
+
         // Since the deepest depth is 7.
         return 7;
     }
@@ -174,23 +180,21 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     private int calcRasteredParamNum(int depth, double requestParam, double rootUL, double rootLR, boolean isUL) {
         int bound = (int) (Math.pow(2, depth) - 1);
+
         // Calculate the specific size (width or height) of each tile in current depth.
         double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
 
         // Always find the difference relative to the root upper left corner.
         double temp = Math.abs(requestParam - rootUL) / tileSize;
+
+        // Round down the temp, because the number of image counting from zero.
         int rasteredParamNum = (int) Math.floor(temp);
-//        if (isUL) {
-//            // UpperLeft coordinate needs to round down.
-//            rasteredParamNum = (int) Math.floor(temp);
-//        } else {
-//            // LowerRight coordinate needs to round up.
-//            rasteredParamNum = (int) Math.ceil(temp);
-//        }
-        // Check whether reach the bound of the whole image.
+
+        // If num larger than the bound num, set it to bound num.
         if (rasteredParamNum > bound) {
             rasteredParamNum = bound;
         }
+
         return rasteredParamNum;
     }
 
@@ -199,17 +203,22 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     private double calcRasteredParam(int depth, int rasteredParamNum, double rootUL, double rootLR, boolean isUL, boolean isLon) {
         int bound = (int) (Math.pow(2, depth) - 1);
+
         // Calculate the specific size (width or height) of each tile in current depth.
         double tileSize = Math.abs(rootUL - rootLR) / (bound + 1);
         double rasteredParam;
 
-        // Always add or minus from the upper left corner lon or lat.
+        // Always add(minus) from the upper(left) corner's Lon or Lat.
         if (isUL) {
             if (isLon) {
                 rasteredParam = rootUL + rasteredParamNum * tileSize;
             } else {
                 rasteredParam = rootUL - rasteredParamNum * tileSize;
             }
+
+            // If calculate lower right coordinates, the rasteredParamNum
+            // needs to plus 1, because for each tile, the right(lower) side
+            // is 1 tileSize away from the left(upper) side.
         } else {
             if (isLon) {
                 rasteredParam = rootUL + (rasteredParamNum + 1) * tileSize;
@@ -217,13 +226,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
                 rasteredParam = rootUL - (rasteredParamNum + 1) * tileSize;
             }
         }
-//        if (isLon) {
-//            // Lon increases from left to right.
-//            rasteredParam = rootUL + rasteredParamNum * tileSize;
-//        } else {
-//            // Lat decreases from up to down.
-//            rasteredParam = rootUL - rasteredParamNum * tileSize;
-//        }
+
         return rasteredParam;
     }
 
