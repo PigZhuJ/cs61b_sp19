@@ -27,7 +27,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         // You might find it helpful to uncomment the line below:
         // List<Node> nodes = this.getNodes();
         pointToID = new HashMap<>();
-        List<Point> points = new ArrayList<>();
+        List<Point> points = new LinkedList<>();
         List<Node> nodes = this.getNodes();
 
         Trie = new MyTrieSet();
@@ -38,13 +38,14 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
             // If the node has a name, clean it, then add it to the Trie,
             // and put the (cleaned name, full name) pair into the cleanedToFull map.
             if (node.name() != null) {
-                String fullName = node.name();
-                String cleanedName = cleanString(fullName);
+                String cleanedName = cleanString(node.name());
 
                 Trie.add(cleanedName);
+
                 if (!cleanedNameToNodes.containsKey(cleanedName)) {
                     cleanedNameToNodes.put(cleanedName, new LinkedList<>());
                 }
+                // Replace the old list that mapped to the specific cleanedName with new one.
                 nodesList = cleanedNameToNodes.get(cleanedName);
                 nodesList.add(node);
                 cleanedNameToNodes.put(cleanedName, nodesList);
@@ -93,7 +94,6 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         String cleanedPrefix = cleanString(prefix);
         List<String> matchedNames = Trie.keysWithPrefix(cleanedPrefix);
         Set<String> locationsSet = new HashSet<>();
-        List<String> locationsList = new LinkedList<>();
 
         for (String name : matchedNames) {
             for (Node node : cleanedNameToNodes.get(name)) {
@@ -101,8 +101,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
             }
         }
 
-        locationsList.addAll(locationsSet);
-        return locationsList;
+        return new LinkedList<>(locationsSet);
     }
 
     /**
@@ -122,7 +121,6 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<Map<String, Object>> locations = new LinkedList<>();
         String cleanedLocationName = cleanString(locationName);
 
-        // Return an empty list if no location name matches the locationName.
         if (cleanedNameToNodes.containsKey(cleanedLocationName)) {
             for (Node node : cleanedNameToNodes.get(cleanedLocationName)) {
                 Map<String, Object> locationInfo = new HashMap<>();
