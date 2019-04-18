@@ -92,17 +92,17 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     public List<String> getLocationsByPrefix(String prefix) {
         String cleanedPrefix = cleanString(prefix);
         List<String> matchedNames = Trie.keysWithPrefix(cleanedPrefix);
-        List<String> locations = new LinkedList<>();
+        Set<String> locationsSet = new HashSet<>();
+        List<String> locationsList = new LinkedList<>();
 
         for (String name : matchedNames) {
             for (Node node : cleanedNameToNodes.get(name)) {
-                if (!locations.contains(node.name())) {
-                    locations.add(node.name());
-                }
+                locationsSet.add(node.name());
             }
         }
 
-        return locations;
+        locationsList.addAll(locationsSet);
+        return locationsList;
     }
 
     /**
