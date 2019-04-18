@@ -19,7 +19,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     private Map<Point, Long> pointToID;
     private KDTree kdTree;
 
-    private MyTrieSet Trie;
+    private MyTrieSet trieSet;
     private Map<String, List<Node>> cleanedNameToNodes;
 
     public AugmentedStreetMapGraph(String dbPath) {
@@ -30,7 +30,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<Point> points = new LinkedList<>();
         List<Node> nodes = this.getNodes();
 
-        Trie = new MyTrieSet();
+        trieSet = new MyTrieSet();
         cleanedNameToNodes = new HashMap<>();
         List<Node> nodesList;
 
@@ -40,7 +40,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
             if (node.name() != null) {
                 String cleanedName = cleanString(node.name());
 
-                Trie.add(cleanedName);
+                trieSet.add(cleanedName);
 
                 if (!cleanedNameToNodes.containsKey(cleanedName)) {
                     cleanedNameToNodes.put(cleanedName, new LinkedList<>());
@@ -92,7 +92,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      */
     public List<String> getLocationsByPrefix(String prefix) {
         String cleanedPrefix = cleanString(prefix);
-        List<String> matchedNames = Trie.keysWithPrefix(cleanedPrefix);
+        List<String> matchedNames = trieSet.keysWithPrefix(cleanedPrefix);
         Set<String> locationsSet = new HashSet<>();
 
         for (String name : matchedNames) {
