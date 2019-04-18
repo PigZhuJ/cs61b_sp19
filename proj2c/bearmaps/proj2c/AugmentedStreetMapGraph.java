@@ -32,6 +32,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
 
         Trie = new MyTrieSet();
         cleanedNameToNodes = new HashMap<>();
+        List<Node> nodesList;
 
         for (Node node : nodes) {
             // If the node has a name, clean it, then add it to the Trie,
@@ -44,7 +45,6 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
                 if (!cleanedNameToNodes.containsKey(cleanedName)) {
                     cleanedNameToNodes.put(cleanedName, new LinkedList<>());
                 }
-                List<Node> nodesList = new LinkedList<>();
                 nodesList = cleanedNameToNodes.get(cleanedName);
                 nodesList.add(node);
                 cleanedNameToNodes.put(cleanedName, nodesList);
