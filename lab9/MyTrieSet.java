@@ -1,3 +1,5 @@
+package bearmaps.lab9;
+
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
@@ -65,6 +67,10 @@ public class MyTrieSet implements TrieSet61B {
             char c = prefix.charAt(i);
             startNode = startNode.children.get(c);
         }
+        // If prefix itself is a key, add it to the result.
+        if (startNode.isLeaf) {
+            result.add(prefix);
+        }
         for (TrieNode currNode : startNode.children.values()) {
             if (currNode != null) {
                 keysWithPrefix(result, prefix, currNode);
@@ -90,18 +96,18 @@ public class MyTrieSet implements TrieSet61B {
      */
     @Override
     public String longestPrefixOf(String key) {
-        String longestPrefix = "";
+        StringBuilder longestPrefix = new StringBuilder();
         TrieNode currNode = root;
         for (int i = 0; i < key.length(); i += 1) {
             char c = key.charAt(i);
             if (!currNode.children.containsKey(c)) {
-                return longestPrefix;
+                return longestPrefix.toString();
             } else {
-                longestPrefix += c;
+                longestPrefix.append(c);
                 currNode = currNode.children.get(c);
             }
         }
-        return longestPrefix;
+        return longestPrefix.toString();
     }
 
 
@@ -143,9 +149,10 @@ public class MyTrieSet implements TrieSet61B {
 
     }
 
-    /*
+
     public static void main(String[] args) {
         MyTrieSet trie = new MyTrieSet();
+        trie.add("h");
         trie.add("hi");
         trie.add("hello");
         trie.add("help");
@@ -156,11 +163,11 @@ public class MyTrieSet implements TrieSet61B {
 
         System.out.println(trie.contains("hello")); // expect true
         System.out.println(trie.keysWithPrefix("h")); // expect [help, hello, hi, homophone, homosexual, homonym]
-        System.out.println(trie.longestCommonPrefixOf("hello")); // expect hel
+        //System.out.println(trie.longestCommonPrefixOf("hello")); // expect hel
         System.out.println(trie.keysWithPrefix("homo")); // expect [homophone, homosexual, homonym]
-        System.out.println(trie.longestCommonPrefixOf("homophone")); // expect homo
+        //System.out.println(trie.longestCommonPrefixOf("homophone")); // expect homo
         System.out.println(trie.longestPrefixOf("helpful")); // expect help
         System.out.println(trie.longestPrefixOf("homogeneous")); // expect homo
     }
-    */
+
 }
