@@ -36,7 +36,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
 
         for (Node node : nodes) {
             // If the node has a name, clean it, then add it to the trieSet,
-            // and put the (cleaned name, full name) pair into the cleanedToFull map.
+            // and put the (cleaned name, list of nodes) pair into the cleanedNameToNodes map.
             if (node.name() != null) {
                 String cleanedName = cleanString(node.name());
 
