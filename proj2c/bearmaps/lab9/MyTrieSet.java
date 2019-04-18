@@ -111,28 +111,28 @@ public class MyTrieSet implements TrieSet61B {
     }
 
 
-    /**
-     * Return the longest common prefix of the given key in the Trie.
-     */
-    /*
-    public String longestCommonPrefixOf(String key) {
-        if (!contains(key)) {
-            throw new IllegalArgumentException();
-        }
-        String longestCommonPrefix = "";
-        String tempPrefix = "";
-        TrieNode currNode = root;
-        for (int i = 0; i < key.length(); i += 1) {
-            char c = key.charAt(i);
-            if (currNode.children.keySet().size() > 1) {
-                longestCommonPrefix = tempPrefix;
-            }
-            tempPrefix += c;
-            currNode = currNode.children.get(c);
-        }
-        return longestCommonPrefix;
-    }
-    */
+//    /**
+//     * Return the longest common prefix of the given key in the Trie.
+//     */
+//
+//    public String longestCommonPrefixOf(String key) {
+//        if (!contains(key)) {
+//            throw new IllegalArgumentException();
+//        }
+//        String longestCommonPrefix = "";
+//        String tempPrefix = "";
+//        TrieNode currNode = root;
+//        for (int i = 0; i < key.length(); i += 1) {
+//            char c = key.charAt(i);
+//            if (currNode.children.keySet().size() > 1) {
+//                longestCommonPrefix = tempPrefix;
+//            }
+//            tempPrefix += c;
+//            currNode = currNode.children.get(c);
+//        }
+//        return longestCommonPrefix;
+//    }
+
 
 
 
@@ -150,24 +150,24 @@ public class MyTrieSet implements TrieSet61B {
     }
 
 
-    public static void main(String[] args) {
-        MyTrieSet trie = new MyTrieSet();
-        trie.add("h");
-        trie.add("hi");
-        trie.add("hello");
-        trie.add("help");
-        trie.add("zebra");
-        trie.add("homonym");
-        trie.add("homophone");
-        trie.add("homosexual");
-
-        System.out.println(trie.contains("hello")); // expect true
-        System.out.println(trie.keysWithPrefix("h")); // expect [help, hello, hi, homophone, homosexual, homonym]
-        //System.out.println(trie.longestCommonPrefixOf("hello")); // expect hel
-        System.out.println(trie.keysWithPrefix("homo")); // expect [homophone, homosexual, homonym]
-        //System.out.println(trie.longestCommonPrefixOf("homophone")); // expect homo
-        System.out.println(trie.longestPrefixOf("helpful")); // expect help
-        System.out.println(trie.longestPrefixOf("homogeneous")); // expect homo
-    }
+//    public static void main(String[] args) {
+//        MyTrieSet trie = new MyTrieSet();
+//        trie.add("h");
+//        trie.add("hi");
+//        trie.add("hello");
+//        trie.add("help");
+//        trie.add("zebra");
+//        trie.add("homonym");
+//        trie.add("homophone");
+//        trie.add("homosexual");
+//
+//        System.out.println(trie.contains("hello")); // expect true
+//        System.out.println(trie.keysWithPrefix("h")); // expect [help, hello, hi, homophone, homosexual, homonym]
+//        //System.out.println(trie.longestCommonPrefixOf("hello")); // expect hel
+//        System.out.println(trie.keysWithPrefix("homo")); // expect [homophone, homosexual, homonym]
+//        //System.out.println(trie.longestCommonPrefixOf("homophone")); // expect homo
+//        System.out.println(trie.longestPrefixOf("helpful")); // expect help
+//        System.out.println(trie.longestPrefixOf("homogeneous")); // expect homo
+//    }
 
 }
