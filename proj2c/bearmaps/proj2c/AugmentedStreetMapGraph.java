@@ -34,24 +34,26 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         cleanedNameToNodes = new HashMap<>();
 
         for (Node node : nodes) {
-            long id = node.id();
-
             // If the node has a name, clean it, then add it to the Trie,
             // and put the (cleaned name, full name) pair into the cleanedToFull map.
-            if (this.name(id) != null) {
-                String fullName = this.name(id);
+            if (node.name() != null) {
+                String fullName = node.name();
                 String cleanedName = cleanString(fullName);
 
                 Trie.add(cleanedName);
                 if (!cleanedNameToNodes.containsKey(cleanedName)) {
                     cleanedNameToNodes.put(cleanedName, new LinkedList<>());
                 }
-                cleanedNameToNodes.get(cleanedName).add(node);
+                List<Node> nodesList = new LinkedList<>();
+                nodesList = cleanedNameToNodes.get(cleanedName);
+                nodesList.add(node);
+                cleanedNameToNodes.put(cleanedName, nodesList);
             }
 
             // Only consider the node that has neighbors,
             // and turn these nodes to Points to service
             // the KDTree.
+            long id = node.id();
             if (!this.neighbors(id).isEmpty()) {
                 double x = node.lon();
                 double y = node.lat();
