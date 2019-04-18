@@ -194,8 +194,11 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         int rasteredParamNum = (int) Math.floor(temp);
 
         // If num larger than the bound num, set it to bound num.
+        // If num smaller than 0, set it to 0;
         if (rasteredParamNum > bound) {
             rasteredParamNum = bound;
+        } else if (rasteredParamNum < 0) {
+            rasteredParamNum = 0;
         }
 
         return rasteredParamNum;
