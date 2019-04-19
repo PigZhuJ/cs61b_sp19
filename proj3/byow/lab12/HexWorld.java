@@ -147,7 +147,6 @@ public class HexWorld {
 //        HexWorld.addHexagon(world, 29, 0, 3, Tileset.FLOWER);
 //        HexWorld.addHexagon(world, 29, 6, 3, Tileset.GRASS);
 //        HexWorld.addHexagon(world, 24, 3, 3, Tileset.WALL);
-//        HexWorld.addHexagon(world, 34, 3, 3, Tileset.AVATAR);
         HexWorld.addTesselationOfHexagons(world, 29, 0, 3);
         ter.renderFrame(world);
 
