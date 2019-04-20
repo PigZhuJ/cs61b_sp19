@@ -25,7 +25,7 @@ public class HexWorld {
     }
 
     /**
-     * Constructs the lower half of a hexagon from bottom to up.
+     * Constructs the lower half of a hexagon from bottom to middle.
      */
     private static void addLowerHalf(TETile[][] world, int x, int y, int s, TETile tile) {
         int height = s;
@@ -36,13 +36,13 @@ public class HexWorld {
                 // When height increases i, the start position in that level will shift i
                 // to the left, i.e. decreases i. Meanwhile, in each level, the number of
                 // tiles will increase (2 * current height) amount.
-                world[x - i + j][y + i] = tile;
+                world[(x - i) + j][y + i] = tile;
             }
         }
     }
 
     /**
-     * Constructs the upper half of a hexagon from up to bottom.
+     * Constructs the upper half of a hexagon from up to middle.
      */
     private static void addUpperHalf(TETile[][] world, int x, int y, int s, TETile tile) {
         int depth = s;
@@ -53,7 +53,7 @@ public class HexWorld {
                 // When depth increases i, the start position in that level will shift i
                 // to the left, i.e. decreases i. Meanwhile, in each level, the number of
                 // tiles will increase (2 * current depth) amount.
-                world[x - i + j][y - i] = tile;
+                world[(x - i) + j][y - i] = tile;
             }
         }
     }
@@ -87,8 +87,6 @@ public class HexWorld {
             tile = randomTile();
             addHexagon(world, startX, startY, s, tile);
         }
-
-
     }
 
     /**
@@ -101,7 +99,6 @@ public class HexWorld {
         }
         return x - offset;
     }
-
 
     /**
      * Calculates y start coordinate for column of hexagons.
@@ -131,8 +128,6 @@ public class HexWorld {
             default: return Tileset.NOTHING;
         }
     }
-
-
 
     public static void main(String[] args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
