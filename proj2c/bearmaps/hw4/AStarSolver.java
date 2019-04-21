@@ -1,17 +1,13 @@
 package bearmaps.hw4;
 
 import bearmaps.proj2ab.ArrayHeapMinPQ;
-import bearmaps.proj2ab.ExtrinsicMinPQ;
 import edu.princeton.cs.algs4.Stopwatch;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
-    private ExtrinsicMinPQ<Vertex> PQ = new ArrayHeapMinPQ<>();
-    private HashMap<Vertex, Double> distToStart = new HashMap<>();
-    private HashMap<Vertex, Double> distToEnd = new HashMap<>();
-    private HashMap<Vertex, Vertex> edgeTo = new HashMap<>();
     private SolverOutcome outcome;
     private LinkedList<Vertex> solution = new LinkedList<>();
     private double solutionWeight;
@@ -30,6 +26,11 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
      * @param timeout
      */
     public AStarSolver(AStarGraph<Vertex> input, Vertex start, Vertex end, double timeout) {
+        ArrayHeapMinPQ<Vertex> PQ = new ArrayHeapMinPQ<>();
+        Map<Vertex, Double> distToStart = new HashMap<>();
+        Map<Vertex, Double> distToEnd = new HashMap<>();
+        Map<Vertex, Vertex> edgeTo = new HashMap<>();
+
         Stopwatch sw = new Stopwatch();
         distToStart.put(start, 0.0);
         PQ.add(start, distToStart.get(start));
