@@ -1,8 +1,9 @@
 package bearmaps.proj2c;
 
 import bearmaps.hw4.AStarSolver;
-import java.util.List;
-import java.util.Objects;
+import bearmaps.hw4.WeightedEdge;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +41,135 @@ public class Router {
      */
     public static List<NavigationDirection> routeDirections(AugmentedStreetMapGraph g, List<Long> route) {
         /* fill in for part IV */
-        return null;
+
+        double distOnPrevWay = 0;
+        int prevDirToChange = 0; // Set default value to "Start".
+        int currDirToChange;
+        List<NavigationDirection> results = new LinkedList<>();
+        List<WeightedEdge<Long>> ways = getWays(g, route);
+
+        // Edge case, if there are only 2 vertices in route, namely start and destination,
+        // then the result is simple.
+        if (ways.size() == 1) {
+            NavigationDirection naviDir = setNaviDir(prevDirToChange, ways.get(0).getName(), ways.get(0).weight());
+            results.add(naviDir);
+            return results;
+        }
+
+        // Normal case, where there are at least 3 vertices (2 ways) in the route.
+        for (int i = 1; i < ways.size(); i += 1) {
+            WeightedEdge<Long> prevWay = ways.get(i - 1);
+            WeightedEdge<Long> currWay = ways.get(i);
+
+            long prevVertex = prevWay.from();
+            long currVertex = prevWay.to();
+            long nextVertex = currWay.to();
+
+            double[] prevPos = getCoord(g, prevVertex);
+            double[] currPos = getCoord(g, currVertex);
+            double[] nextPos = getCoord(g, nextVertex);
+
+            // If the way has no name, set its name to "unknown road".
+            String prevWayName = prevWay.getName() != null ? prevWay.getName() : "unknown road";
+            String currWayName = currWay.getName() != null ? currWay.getName() : "unknown road";
+
+            // Since the prevWay is passed at this time, add its weight,
+            // i.e. the length of prevWay, to distOnPrevWay.
+            distOnPrevWay += prevWay.weight();
+
+            // If name of the way changes, it means that a NavigationDirection
+            // object needs to be created and be added to results.
+            if (!currWayName.equals(prevWayName)) {
+
+                // Calculate two bearings, prevBearing is the bearing between prevVertex and currVertex,
+                // currBearing is the bearing between currVertex between nextVertex.
+                double prevBearing = NavigationDirection.bearing(prevPos[0], currPos[0], prevPos[1], currPos[1]);
+                double currBearing = NavigationDirection.bearing(currPos[0], nextPos[0], currPos[1], nextPos[1]);
+
+                // Calculate what direction we are going based on the two bearings.
+                currDirToChange = NavigationDirection.getDirection(prevBearing, currBearing);
+
+                // Because a NavigationDirection object of a way needs the total distance travelled on
+                // that way, we cannot create a NavigationDirection object for the way we are travelling,
+                // until we meet a new way with another name. Therefore, every time we find currWayName
+                // is different from prevWayName, we create a NavigationDirection object for the way we
+                // just passed, which has name of prevWayName and direction of prevDirToChange.
+                NavigationDirection naviDir = setNaviDir(prevDirToChange, prevWayName, distOnPrevWay);
+
+                // Set prevDirToChange to currDirToChange, which will be used in next time naviDir creation.
+                prevDirToChange = currDirToChange;
+
+                // Add the NavigationDirection object of the way we just passed to the results.
+                results.add(naviDir);
+
+                // Because we changed to a new way with a different name, so reset the distance we travelled.
+                distOnPrevWay = 0;
+            }
+
+            // Check whether the dest is reached by currWay, i.e. whether currWay is the last
+            // way in ways. If yes, update the distance travelled, and create a NavigationDirection
+            // object for the currWay, because there is no chance to meet a new way, since the whole
+            // loop ends after this loop.
+            if (i == ways.size() - 1) {
+                distOnPrevWay += currWay.weight();
+                NavigationDirection naviDir = setNaviDir(prevDirToChange, currWayName, distOnPrevWay);
+                results.add(naviDir);
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Create a new NavigationDirection object from given direction, way, distance.
+     *
+     * @param direction
+     * @param way
+     * @param distance
+     * @return
+     */
+    private static NavigationDirection setNaviDir(int direction, String way, double distance) {
+        NavigationDirection naviDir = new NavigationDirection();
+        naviDir.direction = direction;
+        naviDir.way = way;
+        naviDir.distance = distance;
+        return naviDir;
+    }
+
+    /**
+     * Return a list of WeightedEdge that connected every two adjacent vertices in route.
+     *
+     * @param g
+     * @param route
+     * @return
+     */
+    public static List<WeightedEdge<Long>> getWays(AugmentedStreetMapGraph g, List<Long> route) {
+        List<WeightedEdge<Long>> ways = new LinkedList<>();
+        long currVertex;
+        long nextVertex;
+        for (int i = 1; i < route.size(); i += 1) {
+            currVertex = route.get(i - 1);
+            nextVertex = route.get(i);
+            for (WeightedEdge<Long> edge : g.neighbors(currVertex)) {
+                if (edge.to().equals(nextVertex)) {
+                    ways.add(edge);
+                }
+            }
+        }
+        return ways;
+    }
+
+    /**
+     * Return coordinates of an vertex in the form of an array [lon, lat].
+     *
+     * @param g
+     * @param vertex
+     * @return
+     */
+    public static double[] getCoord(AugmentedStreetMapGraph g, long vertex) {
+        double[] coord = new double[2];
+        coord[0] = g.lon(vertex);
+        coord[1] = g.lat(vertex);
+        return coord;
     }
 
     /**
