@@ -41,7 +41,6 @@ public class Router {
      */
     public static List<NavigationDirection> routeDirections(AugmentedStreetMapGraph g, List<Long> route) {
         /* fill in for part IV */
-
         double distOnPrevWay = 0;
         int prevDirToChange = 0; // Set default value to "Start".
         int currDirToChange;
