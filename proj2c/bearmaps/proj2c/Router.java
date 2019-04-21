@@ -141,7 +141,7 @@ public class Router {
      * @param route
      * @return
      */
-    public static List<WeightedEdge<Long>> getWays(AugmentedStreetMapGraph g, List<Long> route) {
+    private static List<WeightedEdge<Long>> getWays(AugmentedStreetMapGraph g, List<Long> route) {
         List<WeightedEdge<Long>> ways = new LinkedList<>();
         long currVertex;
         long nextVertex;
@@ -164,7 +164,7 @@ public class Router {
      * @param vertex
      * @return
      */
-    public static double[] getPos(AugmentedStreetMapGraph g, long vertex) {
+    private static double[] getPos(AugmentedStreetMapGraph g, long vertex) {
         double[] pos = new double[2];
         pos[0] = g.lon(vertex);
         pos[1] = g.lat(vertex);
