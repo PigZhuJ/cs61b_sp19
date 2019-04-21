@@ -64,9 +64,9 @@ public class Router {
             long currVertex = prevWay.to();
             long nextVertex = currWay.to();
 
-            double[] prevPos = getCoord(g, prevVertex);
-            double[] currPos = getCoord(g, currVertex);
-            double[] nextPos = getCoord(g, nextVertex);
+            double[] prevPos = getPos(g, prevVertex);
+            double[] currPos = getPos(g, currVertex);
+            double[] nextPos = getPos(g, nextVertex);
 
             // If the way has no name, set its name to "unknown road".
             String prevWayName = prevWay.getName() != null ? prevWay.getName() : "unknown road";
@@ -164,11 +164,11 @@ public class Router {
      * @param vertex
      * @return
      */
-    public static double[] getCoord(AugmentedStreetMapGraph g, long vertex) {
-        double[] coord = new double[2];
-        coord[0] = g.lon(vertex);
-        coord[1] = g.lat(vertex);
-        return coord;
+    public static double[] getPos(AugmentedStreetMapGraph g, long vertex) {
+        double[] pos = new double[2];
+        pos[0] = g.lon(vertex);
+        pos[1] = g.lat(vertex);
+        return pos;
     }
 
     /**
