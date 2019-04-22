@@ -156,7 +156,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         if (!containsKey(key)) {
             return null;
         }
-        return remove(root, key).value;
+        V toRemove = get(key);
+        root = remove(root, key);
+        return toRemove;
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -170,7 +172,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         if (!get(key).equals(value)) {
             return null;
         }
-        return remove(root, key).value;
+        root = remove(root, key);
+        return value;
     }
 
     /* Return the tree which has the node with specific key been removed. */
