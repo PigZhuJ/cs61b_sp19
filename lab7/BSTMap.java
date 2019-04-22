@@ -1,6 +1,7 @@
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
@@ -152,7 +153,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        if (!containsKey(key)) {
+            return null;
+        }
+        return remove(root, key).value;
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -160,18 +164,109 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (!containsKey(key)) {
+            return null;
+        }
+        if (!get(key).equals(value)) {
+            return null;
+        }
+        return remove(root, key).value;
     }
 
+    /* Return the tree which has the node with specific key been removed. */
+    private Node remove(Node x, K key) {
+        if (x == null) {
+            return null;
+        }
+
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) {
+            x.left = remove(x.left, key);
+        } else if (cmp > 0) {
+            x.right = remove(x.right, key);
+        } else {
+            if (x.right == null) {
+                return x.left;
+            }
+            if (x.left == null) {
+                return x.right;
+            }
+            // If both left and right nodes are not null, then replace this node
+            // with the smallest node in the right node (or with the largest
+            // node in the left node, same, but does not implement here).
+            Node temp = x;
+            x = min(temp.right);
+            x.right = deleteMin(temp.right);
+            x.left = temp.left;
+        }
+        x.size = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    private Node min(Node x) {
+        if (x.left == null) {
+            return x;
+        }
+        return min(x.left);
+    }
+
+    /* Return the tree which has the node with min key been removed. */
+    private Node deleteMin(Node x) {
+        if (x.left == null) {
+            // If x.left is null, meaning that x is the min, so replace it with
+            // x.right, whether x.right is null or not does not matter.
+            return x.right;
+        }
+        x.left = deleteMin(x.left);
+        x.size = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    /* Iterator of the BSTMap. */
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new BSTIterator(root);
     }
 
-    /*public static void main(String[] args) {
+    private class BSTIterator implements Iterator<K> {
+        private Stack<Node> stack = new Stack<>();
+
+        public BSTIterator(Node src) {
+            while (src != null) {
+                // Push root node and all left nodes to the stack.
+                stack.push(src);
+                src = src.left;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        @Override
+        public K next() {
+            Node curr = stack.pop();
+
+            if (curr.right != null) {
+                Node temp = curr.right;
+                while (temp != null) {
+                    stack.push(temp);
+                    temp = temp.left;
+                }
+            }
+            return curr.key;
+        }
+    }
+
+    public static void main(String[] args) {
         BSTMap<String, Integer> bstMap = new BSTMap<>();
         for (int i = 0; i < 10; i++) {
             bstMap.put("hi" + i, 1 + i);
         }
-        bstMap.printInOrder();
-    }*/
+//        bstMap.printInOrder();
+        Iterator<String> itr = bstMap.iterator();
+        while (itr.hasNext()) {
+            System.out.println(itr.next());
+        }
+    }
 }
